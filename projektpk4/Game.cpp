@@ -1,11 +1,22 @@
 #include "Game.h"
 #include <optional>
 
-Game::Game() : window(sf::VideoMode({ 800, 600 }), "Super Mario Bros - OOP")
+// DOBRZE - U¿ywamy dwukropka (Listy Inicjalizacyjnej)!
+Game::Game()
+    : window(sf::VideoMode({ 800, 600 }), "Super Mario Bros - OOP"),
+    play_button(300.f, 100.f, 375.f, 105.f, font, "GRAJ"),
+    table_button(300.f, 150.f, 305.f, 155.f, font, "TABELA WYNIKOW"),
+    settings_button(300.f, 200.f, 340.f, 205.f, font, "USTAWIENIA"),
+    exit_button(300.f, 250.f, 360.f, 255.f, font, "WYJSCIE")
 {
     window.setFramerateLimit(60);
-
     currentState = GameState::Menu;
+
+
+    if (!font.openFromFile("ALGER.ttf"))
+    { 
+        // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
+    }
 }
 
 void Game::run()
@@ -64,8 +75,15 @@ void Game::update()
         // na prostok¹t i wcisn¹³eœ lewy przycisk myszy.
         if (play_button.isClicked(window))
         {
-            currentState = GameState::Playing; // Odpalamy grê!
+            currentState = GameState::Playing; // Odpalamy grê
         }
+
+        if (exit_button.isClicked(window))
+        {
+            window.close(); // zamykamy grê
+        }
+
+        
     }
 }
 
@@ -76,6 +94,9 @@ void Game::render()
     {
         window.clear(sf::Color::Black); 
         play_button.draw(window);
+        table_button.draw(window);
+        settings_button.draw(window);
+        exit_button.draw(window);
     }
     else if (currentState == GameState::Playing)
     {

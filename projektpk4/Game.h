@@ -17,7 +17,11 @@ private:
 
 	Player mario; //tworzymy obiekt Mario
 
-	Button play_button; //tworzymy obiekt przycisku graj w menu
+	sf::Font font; //czcionka do przyciskow
+	Button play_button;
+	Button table_button;
+	Button settings_button;
+	Button exit_button;
 
 	void processEvents(); // Odpowiada za sprawdzanie klawiatury (Spacja, Esc) i zamykanie okna
 	void update(); // Tutaj liczy siê matematyka i fizyka
