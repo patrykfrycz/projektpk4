@@ -1,16 +1,24 @@
 #include "Game.h"
 #include <optional>
 
-// DOBRZE - U¿ywamy dwukropka (Listy Inicjalizacyjnej)!
+
 Game::Game()
     : window(sf::VideoMode({ 800, 600 }), "Super Mario Bros - OOP"),
+    /*
+    * tutaj w konstruktorze game przy okazji konstruujemy przyciski podaj¹c kolejno:
+    * pozycje X przycisku; pozycje Y przycisku; pozycje X napisu; pozycje Y napisu
+    */
+    resume_button(300.f, 100.f, 370.f, 105.f, font, "WZNÓW"),
     play_button(300.f, 100.f, 375.f, 105.f, font, "GRAJ"),
     table_button(300.f, 150.f, 305.f, 155.f, font, "TABELA WYNIKOW"),
     settings_button(300.f, 200.f, 340.f, 205.f, font, "USTAWIENIA"),
-    exit_button(300.f, 250.f, 360.f, 255.f, font, "WYJSCIE")
+    exit_button(300.f, 250.f, 360.f, 255.f, font, "WYJSCIE"),
+    pause_button(20.f, 20.f, 90.f, 25.f, font, "PAUZA")
+    
 {
     window.setFramerateLimit(60);
     currentState = GameState::Menu;
+    previousState = GameState::Menu;
 
 
     if (!font.openFromFile("ALGER.ttf"))
@@ -33,6 +41,8 @@ void Game::processEvents()
 {
     while (const std::optional event = window.pollEvent())
     {
+        //w ponizszych if-ach okreslamy co ma sie stac gdy nacisniemy dany przycisk
+
         // Zamkniêcie okna krzy¿ykiem
         if (event->is<sf::Event::Closed>())
         {
@@ -59,37 +69,54 @@ void Game::processEvents()
                 currentState = GameState::Menu;
             }
         }
+
+        if (const auto* mouseEvents = event->getIf<sf::Event::MouseButtonPressed>())
+        {
+            if (mouseEvents->button == sf::Mouse::Button::Left)
+            {
+                if (currentState == GameState::Menu)
+                {
+                    if (play_button.isClicked(window)) currentState = GameState::Playing;
+                    if (exit_button.isClicked(window)) window.close();
+                    if (settings_button.isClicked(window)) 
+                    {                     
+                        previousState = currentState;
+                        currentState = GameState::Settings;
+                    }
+                }
+
+                if (currentState == GameState::Pause) {
+                    if (resume_button.isClicked(window)) currentState = GameState::Playing;
+                    if (exit_button.isClicked(window)) currentState = GameState::Menu;
+                    if (settings_button.isClicked(window)) 
+                    {
+                        previousState = currentState;
+                        currentState = GameState::Settings;
+                    }
+                }
+
+                if (currentState == GameState::Playing) {
+                    if (pause_button.isClicked(window)) currentState = GameState::Pause;
+                }
+
+                if (currentState == GameState::Settings) {
+                    if (exit_button.isClicked(window)) currentState = previousState;
+                }
+            }
+        }
     }
 }
 
 void Game::update()
 {
-    if (currentState == GameState::Playing)
-    {
-        mario.update(); //Aktualizujemy fizyke mario tylko podczas ekranu gry
-    }
-
-    if (currentState == GameState::Menu)
-    {
-        // Tu gra na ¿ywo, 60 razy na sekundê, sprawdza czy najecha³eœ 
-        // na prostok¹t i wcisn¹³eœ lewy przycisk myszy.
-        if (play_button.isClicked(window))
-        {
-            currentState = GameState::Playing; // Odpalamy grê
-        }
-
-        if (exit_button.isClicked(window))
-        {
-            window.close(); // zamykamy grê
-        }
-
-        
-    }
+    //w ponizszych if-ach aktualizujemy pozycje np gracza lub innych obiektow ktore sie szybko zmieniaja
+    if (currentState == GameState::Playing) mario.update(); 
 }
 
 void Game::render()
 {
-    // Zmieniamy kolor t³a w zale¿noœci od stanu, ¿eby wizualnie udowodniæ dzia³anie
+    //w poni¿szych if-ach w zaleznosci od stanu gry ktory ma sie zaladowac
+    //podajemy rzeczy ktore maja byc renderowane odrazu na poczatek zaladowanego stanu
     if (currentState == GameState::Menu)
     {
         window.clear(sf::Color::Black); 
@@ -98,15 +125,25 @@ void Game::render()
         settings_button.draw(window);
         exit_button.draw(window);
     }
+    else if (currentState==GameState::Settings)
+    {
+        window.clear(sf::Color::Black);
+        exit_button.draw(window);
+    }
     else if (currentState == GameState::Playing)
     {
-        window.clear(sf::Color::Blue);  
+        window.clear(sf::Color::Green);  
         mario.draw(window);
+        pause_button.draw(window);
     }
     else if (currentState == GameState::Pause)
     {
-        window.clear(sf::Color::Red);   
+        window.clear(sf::Color::Blue);   
+        resume_button.draw(window);
+        table_button.draw(window);
+        settings_button.draw(window);
+        exit_button.draw(window);
     }
-
+  
     window.display();
 }
