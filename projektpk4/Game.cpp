@@ -1,49 +1,33 @@
 #include "Game.h"
 #include <optional>
 
-int button_size_x = 400;
-int button_size_y = 110;
-int but_size_x = button_size_x / 2;
-int but_size_y = button_size_y / 2;
 
 Game::Game()
-    : window(sf::VideoMode({ 1200, 800 }), "Super Mario Bros - OOP"),
-    world(window.getSize()),
-    backgroundTex("tlo.png"),
-	backgroundSprite(backgroundTex),
+    : window(sf::VideoMode({ 800, 600 }), "Super Mario Bros - OOP"),
     /*
     * tutaj w konstruktorze game przy okazji konstruujemy przyciski podaj¹c kolejno:
     * pozycje X przycisku; pozycje Y przycisku; pozycje X napisu; pozycje Y napisu
     */
-    resume_button(300.f,100.f, 370.f, 105.f, font, "WZNÓW"),
+    resume_button(300.f, 100.f, 370.f, 105.f, font, "WZNÓW"),
     play_button(300.f, 100.f, 375.f, 105.f, font, "GRAJ"),
     table_button(300.f, 150.f, 305.f, 155.f, font, "TABELA WYNIKOW"),
     settings_button(300.f, 200.f, 340.f, 205.f, font, "USTAWIENIA"),
     exit_button(300.f, 250.f, 360.f, 255.f, font, "WYJSCIE"),
-    pause_button(20.f, 20.f, 90.f, 25.f, font, "PAUZA")
-    
+    pause_button(20.f, 20.f, 90.f, 25.f, font, "PAUZA"),
+
+    ground(0.f, 500.f, 2000.f, 100.f) // Dodajemy platformê
 {
     window.setFramerateLimit(60);
     currentState = GameState::Menu;
     previousState = GameState::Menu;
 
+    camera.setSize({ 800.f, 600.f });
+    camera.setCenter({ 400.f, 300.f });
 
     if (!font.openFromFile("ALGER.ttf"))
     {
         // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
     }
-
-    if (!backgroundTex.loadFromFile("tlo.png")) {
-
-        // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli 
-    }
-
-    backgroundSprite.setTexture(backgroundTex); // dopasowanie do okna
-    backgroundSprite.setScale(sf::Vector2f(
-        2.f * static_cast<float>(window.getSize().x) / backgroundTex.getSize().x,
-        static_cast<float>(window.getSize().y) / backgroundTex.getSize().y
-    ));
-
 }
 
 void Game::run()
@@ -100,8 +84,8 @@ void Game::processEvents()
                         currentState = GameState::Playing;
                     }
                     if (exit_button.isClicked(window)) window.close();
-                    if (settings_button.isClicked(window)) 
-                    {                     
+                    if (settings_button.isClicked(window))
+                    {
                         previousState = currentState;
                         currentState = GameState::Settings;
                     }
@@ -110,7 +94,7 @@ void Game::processEvents()
                 if (currentState == GameState::Pause) {
                     if (resume_button.isClicked(window)) currentState = GameState::Playing;
                     if (exit_button.isClicked(window)) currentState = GameState::Menu;
-                    if (settings_button.isClicked(window)) 
+                    if (settings_button.isClicked(window))
                     {
                         previousState = currentState;
                         currentState = GameState::Settings;
@@ -132,14 +116,36 @@ void Game::processEvents()
 void Game::update()
 {
     //w ponizszych if-ach aktualizujemy pozycje np gracza lub innych obiektow ktore sie szybko zmieniaja
-    if (currentState == GameState::Playing) mario.update(); 
+    if (currentState == GameState::Playing) {
+        mario.update();
+
+        // Jeœli pozycja X gracza jest wiêksza ni¿ œrodek kamery, przesuñ kamerê
+        if (mario.getX() > camera.getCenter().x) {
+            camera.setCenter({ mario.getX(), 300.f });
+        }
+
+        // BLOKADA COFANIA (Lewa krawêdŸ ekranu)
+        float leftEdge = camera.getCenter().x - 400.f;
+
+        if (mario.getX() < leftEdge) {
+            mario.setX(leftEdge); // Wypychamy Mario z powrotem na lew¹ krawêdŸ
+        }
+
+        // Sprawdzamy kolizjê gracza z platform¹ 
+        std::optional<sf::FloatRect> intersection = mario.getBounds().findIntersection(ground.getBounds());
+
+        // Jeœli jest kolizja (has_value() zwraca true)
+        if (intersection.has_value()) {
+            // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
+            mario.stopFalling(ground.getBounds().position.y);
+        }
+    }
 }
 
 void Game::render()
 {
     //w poni¿szych if-ach w zaleznosci od stanu gry ktory ma sie zaladowac
     //podajemy rzeczy ktore maja byc renderowane odrazu na poczatek zaladowanego stanu
-
     if (currentState == GameState::Menu)
     {
         window.clear(sf::Color::Black);
@@ -151,37 +157,27 @@ void Game::render()
     else if (currentState == GameState::Settings)
     {
         window.clear(sf::Color::Black);
-        // proste ustawienia - tylko przycisk wyjœcia (wraca do previousState)
         exit_button.draw(window);
     }
     else if (currentState == GameState::Playing)
     {
-        window.clear(sf::Color::Green);  
+        window.clear(sf::Color::Black);
+        window.setView(camera);
         mario.draw(window);
+        ground.draw(window);
+        window.setView(window.getDefaultView());
         pause_button.draw(window);
     }
     else if (currentState == GameState::Pause)
     {
-        // poka¿ scenê gry + pó³przezroczyste t³o i menu pauzy
-        window.clear();
-        window.draw(backgroundSprite);
-        for (const auto& pl : platforms) pl.draw(window);
-        mario.draw(window);
-
-        // overlay, ¿eby menu by³o czytelne
-        sf::RectangleShape overlay(
-            sf::Vector2f(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y))
-        );
-        overlay.setFillColor(sf::Color(0, 0, 0, 150));
-        window.draw(overlay);
-
+        window.clear(sf::Color::Blue);
         resume_button.draw(window);
         table_button.draw(window);
         settings_button.draw(window);
         exit_button.draw(window);
     }
-    
-  
+
+
     window.display();
 }
 

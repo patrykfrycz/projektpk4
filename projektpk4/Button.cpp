@@ -1,16 +1,16 @@
 #include "Button.h"
 
 
-Button::Button(float x, float y,float tx, float ty, const sf::Font& font, std::string buttonText): text(font) {
-	shape.setSize({ 220.f, 40.f });
-	shape.setFillColor(sf::Color::White);
-	shape.setPosition({ x, y });
+Button::Button(float x, float y, float tx, float ty, const sf::Font& font, std::string buttonText) : text(font) {
+    shape.setSize({ 220.f, 40.f });
+    shape.setFillColor(sf::Color::White);
+    shape.setPosition({ x, y });
 
     //napis na przycisku
     text.setString(buttonText);
     text.setCharacterSize(24);
     text.setFillColor(sf::Color::Black); // Czarny napis na bia³ym tle
-    text.setPosition({ tx, ty }); 
+    text.setPosition({ tx, ty });
 }
 
 // 2. Rysowanie przycisku
@@ -27,7 +27,7 @@ bool Button::isClicked(sf::RenderWindow& window) {
 
     if (btnArea.contains(sf::Vector2f(mousePos))) {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
-            return true; 
+            return true;
         }
     }
 

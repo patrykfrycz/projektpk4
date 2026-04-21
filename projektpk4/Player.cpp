@@ -1,76 +1,50 @@
 #include "Player.h"
-#include <SFML/Graphics.hpp>
-#include <string>
-#include <vector>
 
-Player::Player(const sf::Vector2f& size, const sf::Vector2f& startPos) {
-	shape.setSize({64.f, 64.f});
+Player::Player() {
+	shape.setSize({ 50.f, 50.f });
 	shape.setFillColor(sf::Color::Red);
-	shape.setPosition({600, 600});
+	shape.setPosition({ 100.f, 100.f });
 
 	speed = 5.f;
-	gravity;
-    bool StaysOnGround = false;
+	gravity = 3.f;
 }
 
-void Player::update(float dt, const std::vector<sf::FloatRect>&platforms) {
-    bool StaysOnGround = false;
-	float jumpStrength = 20.f;
-	// grawitacja
-	//velocity.y += gravity;
-	//shape.move(velocity * dt);
+void Player::update() {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+		shape.move({ -speed, 0.f });
+	}
 
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
-	//	shape.move({ -speed, 0.f });
-	//}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+		shape.move({ speed, 0.f });
+	}
 
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
-	//	shape.move({ speed, 0.f });
-	//}
-
-	//shape.move({ 0.f, gravity });
-
-
-
-    if (dt <= 0.f) return;
-
-    // horizontal movement (pixels per second)
-    float moveX = 0.f;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) or sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        shape.move({ -speed, 0.f });
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) or sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-	    shape.move({ speed, 0.f });
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && StaysOnGround) { // do dopisania ¿e jeœli jest na platformie to mo¿e skakaæ
-        velocity.y = -jumpStrength;
-		StaysOnGround = false;
-    }
-
-    velocity.y += gravity * dt;
-
-    // zapamiêtaj star¹ pozycjê
-    //float prevY = y;
-
-//    // --- RUCH ---
-//    x += velocityX;
-//    y += velocityY;
-//
-//    // --- KOLIZJA Z PLATFORM¥ ---
-//    if (checkCollision(getRect(), platform)) {
-//        // sprawdzamy czy spada³ z góry
-//        if (prevY + height <= platform.y) {
-//            y = platform.y - height;
-//            velocityY = 0;
-//            isOnGround = true;
-//        }
-//    }
+	shape.move({ 0.f, gravity });
 }
 
-void Player::draw(sf::RenderWindow& window) const
+void Player::draw(sf::RenderWindow& window)
 {
 	window.draw(shape);
 }
 
+
+sf::FloatRect Player::getBounds() const {
+	return shape.getGlobalBounds();
+}
+
+void Player::stopFalling(float platformTopY) {
+	// Ustawiamy gracza idealnie na wierzchu platformy.
+	// Odejmujemy wysokoœæ gracza, ¿eby jego dolna krawêdŸ dotyka³a górnej krawêdzi platformy.
+	shape.setPosition({ shape.getPosition().x, platformTopY - shape.getSize().y });
+}
+
+
+void Player::reset() {
+	shape.setPosition({ 100.f, 300.f });
+}
+
+float Player::getX() const {
+	return shape.getPosition().x;
+}
+void Player::setX(float x) {
+	shape.setPosition({ x, shape.getPosition().y });
+}
