@@ -17,4 +17,15 @@ public:
 
     // Metoda rysuj¹ca gracza na oknie
     void draw(sf::RenderWindow& window);
+
+    // Kolizje
+    sf::FloatRect getBounds() const;
+
+    // Metoda do zaprzestania spadania dzieki kolizji z platforma
+    void stopFalling(float platformTopY);
+
+    void reset();
+
+    float getX() const;
+    void setX(float x);
 };

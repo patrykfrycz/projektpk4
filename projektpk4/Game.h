@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Button.h"
+#include "Platform.h"
 
 enum class GameState {
 	Menu,
@@ -32,7 +33,13 @@ private:
 	void update(); // Tutaj liczy siê matematyka i fizyka
 	void render(); // Tutaj wyœwietlamy kolory i rysunki na ekranie
 
+	Platform ground; //platorma
+
+	sf::View camera;//poruszanie sie ekranu
+
 public:
 	Game(); // KONSTRUKTOR. S³u¿y do ustawienia ustawieñ pocz¹tkowych (rozmiaru okna, tytu³u).
 	void run(); // Wrzucamy do niej g³ówn¹ pêtlê "while(window.isOpen())",
+
+	void resetGame();
 };

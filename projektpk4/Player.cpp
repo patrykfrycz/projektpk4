@@ -26,3 +26,25 @@ void Player::draw(sf::RenderWindow& window)
 	window.draw(shape);
 }
 
+
+sf::FloatRect Player::getBounds() const {
+	return shape.getGlobalBounds();
+}
+
+void Player::stopFalling(float platformTopY) {
+	// Ustawiamy gracza idealnie na wierzchu platformy.
+	// Odejmujemy wysokoœæ gracza, ¿eby jego dolna krawêdŸ dotyka³a górnej krawêdzi platformy.
+	shape.setPosition({ shape.getPosition().x, platformTopY - shape.getSize().y });
+}
+
+
+void Player::reset() {
+	shape.setPosition({100.f, 300.f});
+}
+
+float Player::getX() const {
+	return shape.getPosition().x;
+}
+void Player::setX(float x) {
+	shape.setPosition({x, shape.getPosition().y});
+}

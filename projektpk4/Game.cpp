@@ -13,13 +13,16 @@ Game::Game()
     table_button(300.f, 150.f, 305.f, 155.f, font, "TABELA WYNIKOW"),
     settings_button(300.f, 200.f, 340.f, 205.f, font, "USTAWIENIA"),
     exit_button(300.f, 250.f, 360.f, 255.f, font, "WYJSCIE"),
-    pause_button(20.f, 20.f, 90.f, 25.f, font, "PAUZA")
-    
+    pause_button(20.f, 20.f, 90.f, 25.f, font, "PAUZA"),
+
+    ground(0.f, 500.f, 2000.f, 100.f) // Dodajemy platformê
 {
     window.setFramerateLimit(60);
     currentState = GameState::Menu;
     previousState = GameState::Menu;
 
+    camera.setSize({ 800.f, 600.f });
+    camera.setCenter({ 400.f, 300.f });
 
     if (!font.openFromFile("ALGER.ttf"))
     { 
@@ -76,7 +79,10 @@ void Game::processEvents()
             {
                 if (currentState == GameState::Menu)
                 {
-                    if (play_button.isClicked(window)) currentState = GameState::Playing;
+                    if (play_button.isClicked(window)) {
+                        resetGame();
+                        currentState = GameState::Playing;
+                    }
                     if (exit_button.isClicked(window)) window.close();
                     if (settings_button.isClicked(window)) 
                     {                     
@@ -110,7 +116,30 @@ void Game::processEvents()
 void Game::update()
 {
     //w ponizszych if-ach aktualizujemy pozycje np gracza lub innych obiektow ktore sie szybko zmieniaja
-    if (currentState == GameState::Playing) mario.update(); 
+    if (currentState == GameState::Playing) {
+        mario.update();
+
+        // Jeœli pozycja X gracza jest wiêksza ni¿ œrodek kamery, przesuñ kamerê
+        if (mario.getX() > camera.getCenter().x) {
+            camera.setCenter({ mario.getX(), 300.f }); 
+        }
+
+        // BLOKADA COFANIA (Lewa krawêdŸ ekranu)
+        float leftEdge = camera.getCenter().x - 400.f;
+
+        if (mario.getX() < leftEdge) {
+            mario.setX(leftEdge); // Wypychamy Mario z powrotem na lew¹ krawêdŸ
+        }
+
+        // Sprawdzamy kolizjê gracza z platform¹ 
+        std::optional<sf::FloatRect> intersection = mario.getBounds().findIntersection(ground.getBounds());
+
+        // Jeœli jest kolizja (has_value() zwraca true)
+        if (intersection.has_value()) {
+            // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
+            mario.stopFalling(ground.getBounds().position.y);
+        }
+    }
 }
 
 void Game::render()
@@ -132,8 +161,11 @@ void Game::render()
     }
     else if (currentState == GameState::Playing)
     {
-        window.clear(sf::Color::Green);  
+        window.clear(sf::Color::Black);  
+        window.setView(camera);
         mario.draw(window);
+        ground.draw(window);
+        window.setView(window.getDefaultView());
         pause_button.draw(window);
     }
     else if (currentState == GameState::Pause)
@@ -144,6 +176,14 @@ void Game::render()
         settings_button.draw(window);
         exit_button.draw(window);
     }
+    
   
     window.display();
+}
+
+
+void Game::resetGame() {
+    mario.reset();
+    camera.setCenter({ 400.f, 300.f });
+    ground.resetPlatform();
 }
