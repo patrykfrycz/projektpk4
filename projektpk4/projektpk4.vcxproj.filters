@@ -27,9 +27,6 @@
     <ClCompile Include="Button.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="Platform.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -40,9 +37,6 @@
     </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>Pliki źródłowe</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform.h">
-      <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

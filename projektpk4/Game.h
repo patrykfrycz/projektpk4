@@ -2,7 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Button.h"
-#include "Platform.h"
 
 enum class GameState {
 	Menu,
@@ -14,6 +13,9 @@ enum class GameState {
 
 class Game {
 private:
+
+	sf::Texture backgroundTex;
+	sf::Sprite backgroundSprite;
 	sf::RenderWindow window; // Obiekt reprezentuj¹cy prawdziwe okienko Windowsa
 	GameState currentState; // Zmienna przechowuj¹ca informacjê, na którym ekranie aktualnie jesteœmy
 	GameState previousState; // Zmienna przechowuj¹ca informacjê, na którym ekranie przebywalismy poprzednio
@@ -27,6 +29,11 @@ private:
 	Button settings_button;
 	Button exit_button;
 	Button pause_button;
+
+	World world; // Œwiat gry
+
+	std::vector<Platform> platforms;
+	sf::Clock deltaClock;
 	
 
 	void processEvents(); // Odpowiada za sprawdzanie klawiatury (Spacja, Esc) i zamykanie okna
