@@ -27,6 +27,7 @@ private:
 	Button settings_button;
 	Button exit_button;
 	Button pause_button;
+	Button menu_button;
 
 
 	void processEvents(); // Odpowiada za sprawdzanie klawiatury (Spacja, Esc) i zamykanie okna

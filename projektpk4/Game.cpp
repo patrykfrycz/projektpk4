@@ -14,8 +14,9 @@ Game::Game()
     settings_button(300.f, 200.f, 340.f, 205.f, font, "USTAWIENIA"),
     exit_button(300.f, 250.f, 360.f, 255.f, font, "WYJSCIE"),
     pause_button(20.f, 20.f, 90.f, 25.f, font, "PAUZA"),
+    menu_button(300.f, 200.f, 375.f, 205.f, font, "MENU"), 
 
-    ground(0.f, 500.f, 2000.f, 100.f) // Dodajemy platformê
+    ground(0.f, 500.f, 1000.f, 100.f) // Dodajemy platformê
 {
     window.setFramerateLimit(60);
     currentState = GameState::Menu;
@@ -108,8 +109,15 @@ void Game::processEvents()
                 if (currentState == GameState::Settings) {
                     if (exit_button.isClicked(window)) currentState = previousState;
                 }
+
+                if (currentState == GameState::GameOver) {
+                    if (menu_button.isClicked(window)) currentState = GameState::Menu;
+                    if (exit_button.isClicked(window)) window.close();
+                }
             }
         }
+
+        
     }
 }
 
@@ -138,6 +146,11 @@ void Game::update()
         if (intersection.has_value()) {
             // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
             mario.stopFalling(ground.getBounds().position.y);
+        }
+
+        //Jeœli mario poza ekranem to kioniec gry
+        if (mario.getY()>600.f) {
+            currentState = GameState::GameOver;
         }
     }
 }
@@ -174,6 +187,11 @@ void Game::render()
         resume_button.draw(window);
         table_button.draw(window);
         settings_button.draw(window);
+        exit_button.draw(window);
+    }
+    else if (currentState == GameState::GameOver) {
+        window.clear(sf::Color::Black);
+        menu_button.draw(window);
         exit_button.draw(window);
     }
 

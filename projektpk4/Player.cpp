@@ -6,7 +6,11 @@ Player::Player() {
 	shape.setPosition({ 100.f, 100.f });
 
 	speed = 5.f;
-	gravity = 3.f;
+
+	gravity = 0.5f;
+	speedY = 0.f;
+	jumpPower = 12.f;
+	canJump = false;
 }
 
 void Player::update() {
@@ -18,7 +22,14 @@ void Player::update() {
 		shape.move({ speed, 0.f });
 	}
 
-	shape.move({ 0.f, gravity });
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) && canJump) {
+		speedY = -jumpPower;
+		canJump = false;
+	}
+
+	speedY += gravity;
+
+	shape.move({ 0.f, speedY });
 }
 
 void Player::draw(sf::RenderWindow& window)
@@ -32,19 +43,27 @@ sf::FloatRect Player::getBounds() const {
 }
 
 void Player::stopFalling(float platformTopY) {
-	// Ustawiamy gracza idealnie na wierzchu platformy.
-	// Odejmujemy wysokoœæ gracza, ¿eby jego dolna krawêdŸ dotyka³a górnej krawêdzi platformy.
 	shape.setPosition({ shape.getPosition().x, platformTopY - shape.getSize().y });
+
+	speedY = 0.f; // Zatrzymujemy pêd w dó³
+	canJump = true;  // Jesteœmy na ziemi, mo¿emy znowu skakaæ
 }
 
 
 void Player::reset() {
 	shape.setPosition({ 100.f, 300.f });
+	speedY = 0.f;
+	canJump = false;
 }
 
 float Player::getX() const {
 	return shape.getPosition().x;
 }
+
+float Player::getY() const{
+	return shape.getPosition().y;
+}
+
 void Player::setX(float x) {
 	shape.setPosition({ x, shape.getPosition().y });
 }

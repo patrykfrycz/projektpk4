@@ -8,6 +8,11 @@ private:
     float speed;              // Prêdkoœæ chodzenia na boki
     float gravity;            // Si³a grawitacji (jak szybko spada)
 
+    float speedY; //aktualna prêdkoœæ pionowa
+    float jumpPower; //si³a skoku
+    bool canJump; //czy dotyka ziemi zeby skoczyc
+
+
 public:
     // Konstruktor - ustawi pozycjê startow¹ gracza
     Player();
@@ -27,5 +32,7 @@ public:
     void reset();
 
     float getX() const;
+    float getY() const;
+
     void setX(float x);
 };
