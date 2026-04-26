@@ -71,24 +71,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\patry\SFML\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\libraries\include\;$(IncludePath)</IncludePath>
     <ReferencePath>$(SolutionDir)\libraries\lib;$(ReferencePath)</ReferencePath>
-    <LibraryPath>C:\Users\patry\SFML\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\libraries\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\patry\SFML\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\libraries\include\;$(IncludePath)</IncludePath>
     <ReferencePath>$(SolutionDir)\libraries\lib;$(ReferencePath)</ReferencePath>
-    <LibraryPath>C:\Users\patry\SFML\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\libraries\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\patry\SFML\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\libraries\include\;$(IncludePath)</IncludePath>
     <ReferencePath>$(SolutionDir)\libraries\lib;$(ReferencePath)</ReferencePath>
-    <LibraryPath>C:\Users\patry\SFML\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\libraries\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\patry\SFML\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\libraries\include\;$(IncludePath)</IncludePath>
     <ReferencePath>$(SolutionDir)\libraries\lib;$(ReferencePath)</ReferencePath>
-    <LibraryPath>C:\Users\patry\SFML\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\libraries\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

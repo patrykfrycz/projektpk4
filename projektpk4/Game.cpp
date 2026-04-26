@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <optional>
+#include "Platform.h"
 
 
 Game::Game()
@@ -14,9 +15,16 @@ Game::Game()
     settings_button(300.f, 200.f, 340.f, 205.f, font, "USTAWIENIA"),
     exit_button(300.f, 250.f, 360.f, 255.f, font, "WYJSCIE"),
     pause_button(20.f, 20.f, 90.f, 25.f, font, "PAUZA"),
-    menu_button(300.f, 200.f, 375.f, 205.f, font, "MENU"), 
+    menu_button(300.f, 200.f, 375.f, 205.f, font, "MENU"),
 
-    ground(0.f, 500.f, 1000.f, 100.f) // Dodajemy platformê
+    ground(0.f, 500.f, 500.f, 100.f), // Dodajemy platformê
+    ground2(600.f, 500.f, 400.f, 100.f),
+    ground3(1100.f, 500.f, 1000.f, 100.f),
+    ground4(2200.f, 500.f, 800.f, 100.f),
+    //ground5(0.f, 500.f, 1000.f, 100.f),
+    //ground6(0.f, 500.f, 1200.f, 100.f)
+
+	platform(400.f, 300.f, 300.f, 50.f)
 {
     window.setFramerateLimit(60);
     currentState = GameState::Menu;
@@ -140,7 +148,10 @@ void Game::update()
         }
 
         // Sprawdzamy kolizjê gracza z platform¹ 
-        std::optional<sf::FloatRect> intersection = mario.getBounds().findIntersection(ground.getBounds());
+       /* std::optional<sf::FloatRect> intersection = mario.getBounds().findIntersection(ground.getBounds());
+        std::optional<sf::FloatRect> intersection2 = mario.getBounds().findIntersection(ground2.getBounds());
+        std::optional<sf::FloatRect> intersection3 = mario.getBounds().findIntersection(ground3.getBounds());
+        std::optional<sf::FloatRect> intersection4 = mario.getBounds().findIntersection(ground4.getBounds());
 
         // Jeœli jest kolizja (has_value() zwraca true)
         if (intersection.has_value()) {
@@ -148,7 +159,33 @@ void Game::update()
             mario.stopFalling(ground.getBounds().position.y);
         }
 
-        //Jeœli mario poza ekranem to kioniec gry
+        // Jeœli jest kolizja (has_value() zwraca true)
+        if (intersection2.has_value()) {
+            // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
+            mario.stopFalling(ground2.getBounds().position.y);
+        }
+
+        if (intersection3.has_value()) {
+            // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
+            mario.stopFalling(ground3.getBounds().position.y);
+        }
+
+        if (intersection4.has_value()) {
+            // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
+            mario.stopFalling(ground4.getBounds().position.y);
+        }*/
+
+
+        // poprawione platformy zeby nie przyci¹ga³y przy upadku
+        ground.resolveCollision(mario);
+        ground2.resolveCollision(mario);
+        ground3.resolveCollision(mario);
+        ground4.resolveCollision(mario);
+
+        platform.resolveCollision(mario);
+
+
+        //Jeœli mario poza ekranem to koniec gry
         if (mario.getY()>600.f) {
             currentState = GameState::GameOver;
         }
@@ -177,7 +214,14 @@ void Game::render()
         window.clear(sf::Color::Black);
         window.setView(camera);
         mario.draw(window);
+
         ground.draw(window);
+        ground2.draw(window);
+        ground3.draw(window);
+        ground4.draw(window);
+
+        platform.draw(window);
+
         window.setView(window.getDefaultView());
         pause_button.draw(window);
     }
@@ -204,4 +248,9 @@ void Game::resetGame() {
     mario.reset();
     camera.setCenter({ 400.f, 300.f });
     ground.resetPlatform();
+    ground2.resetPlatform();
+    ground3.resetPlatform();
+    ground4.resetPlatform();
+
+    platform.resetPlatform();
 }

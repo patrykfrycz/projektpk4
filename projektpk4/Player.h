@@ -35,4 +35,5 @@ public:
     float getY() const;
 
     void setX(float x);
+	void setY(float y);
 };

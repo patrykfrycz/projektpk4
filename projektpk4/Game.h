@@ -34,7 +34,14 @@ private:
 	void update(); // Tutaj liczy siê matematyka i fizyka
 	void render(); // Tutaj wyœwietlamy kolory i rysunki na ekranie
 
-	Platform ground; //platorma
+	Platform ground; //platormy
+	Platform ground2;
+	Platform ground3;
+	Platform ground4;
+	//Platform ground5;
+	//Platform ground6;
+
+	Platform platform;
 
 	sf::View camera;//poruszanie sie ekranu
 

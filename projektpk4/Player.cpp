@@ -9,7 +9,7 @@ Player::Player() {
 
 	gravity = 0.5f;
 	speedY = 0.f;
-	jumpPower = 12.f;
+	jumpPower = 15.f;
 	canJump = false;
 }
 
@@ -66,4 +66,9 @@ float Player::getY() const{
 
 void Player::setX(float x) {
 	shape.setPosition({ x, shape.getPosition().y });
+}
+
+void Player::setY(float y) {
+	shape.setPosition({ shape.getPosition().x, y });
+	speedY = 0.f;
 }
