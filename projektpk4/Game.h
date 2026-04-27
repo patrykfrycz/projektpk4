@@ -3,6 +3,9 @@
 #include "Player.h"
 #include "Button.h"
 #include "Platform.h"
+#include "Item.h"
+#include "Coin.h"
+#include "HUD.h"
 
 enum class GameState {
 	Menu,
@@ -29,10 +32,14 @@ private:
 	Button pause_button;
 	Button menu_button;
 
+	std::vector<std::unique_ptr<Item>> items;
+	int score = 0;
 
 	void processEvents(); // Odpowiada za sprawdzanie klawiatury (Spacja, Esc) i zamykanie okna
 	void update(); // Tutaj liczy siê matematyka i fizyka
 	void render(); // Tutaj wyœwietlamy kolory i rysunki na ekranie
+
+	void spawnItem(sf::Vector2f position);
 
 	Platform ground; //platormy
 	Platform ground2;
@@ -42,6 +49,8 @@ private:
 	//Platform ground6;
 
 	Platform platform;
+
+	HUD hud;
 
 	sf::View camera;//poruszanie sie ekranu
 

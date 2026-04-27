@@ -1,6 +1,8 @@
 #include "Game.h"
 #include <optional>
 #include "Platform.h"
+#include "Coin.h"
+#include "HUD.h"
 
 
 Game::Game()
@@ -37,6 +39,37 @@ Game::Game()
     {
         // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
     }
+
+	hud.init(font);
+
+    //items.emplace_back(std::make_unique<Coin>(420.f, 460.f));
+    //items.back()->setOnPickup([this](Player& p) {
+    //    hud.addScore(10); // wynik
+    //    });
+    //items.emplace_back(std::make_unique<Coin>(1150.f, 460.f));
+    //items.back()->setOnPickup([this](Player& p) {
+    //    hud.addScore(10); // wynik
+    //    });
+    //items.emplace_back(std::make_unique<Coin>(460.f, 460.f));
+    //items.emplace_back(std::make_unique<Coin>(200.f, 460.f));
+
+
+    //items.back()->setOnPickup([this](Player& p) {
+    //    hud.addScore(10); // wynik
+    //    });
+
+	Coin* coin1 = new Coin(420.f, 460.f);
+    coin1->coinCollect(hud, items, { 420.f, 460.f });
+
+    Coin* coin2 = new Coin(460.f, 460.f);
+    coin2->coinCollect(hud, items, { 460.f, 460.f });
+
+    Coin* coin3 = new Coin(800.f, 460.f);
+    coin3->coinCollect(hud, items, { 800.f, 460.f });
+
+    Coin* coin4 = new Coin(1150.f, 460.f);
+    coin4->coinCollect(hud, items, { 1150.f, 460.f });
+
 }
 
 void Game::run()
@@ -189,6 +222,14 @@ void Game::update()
         if (mario.getY()>600.f) {
             currentState = GameState::GameOver;
         }
+
+        for (auto& it : items) {
+            if (!it->isActive()) continue;
+            it->update();
+            if (mario.getBounds().findIntersection(it->getBounds()).has_value()) {
+                it->onPickup(mario);
+            }
+        }
     }
 }
 
@@ -222,8 +263,14 @@ void Game::render()
 
         platform.draw(window);
 
+        for (auto& it : items) {
+            if (it && it->isActive()) it->draw(window);
+        }
+
         window.setView(window.getDefaultView());
         pause_button.draw(window);
+        hud.update();
+        hud.draw(window);
     }
     else if (currentState == GameState::Pause)
     {
@@ -253,4 +300,10 @@ void Game::resetGame() {
     ground4.resetPlatform();
 
     platform.resetPlatform();
+    hud.reset();
+}
+
+void spawnItem(sf::Vector2f position) {
+
+
 }
