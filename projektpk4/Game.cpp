@@ -44,23 +44,9 @@ Game::Game()
 
 	hud.init(font);
 
-    //items.emplace_back(std::make_unique<Coin>(420.f, 460.f));
-    //items.back()->setOnPickup([this](Player& p) {
-    //    hud.addScore(10); // wynik
-    //    });
-    //items.emplace_back(std::make_unique<Coin>(1150.f, 460.f));
-    //items.back()->setOnPickup([this](Player& p) {
-    //    hud.addScore(10); // wynik
-    //    });
-    //items.emplace_back(std::make_unique<Coin>(460.f, 460.f));
-    //items.emplace_back(std::make_unique<Coin>(200.f, 460.f));
+	spawnCoins();
 
-
-    //items.back()->setOnPickup([this](Player& p) {
-    //    hud.addScore(10); // wynik
-    //    });
-
-	Coin* coin1 = new Coin(400.f, 430.f);
+	/*Coin* coin1 = new Coin(400.f, 430.f);
     coin1->coinCollect(hud, items, { 400.f, 430.f });
 
     Coin* coin2 = new Coin(500.f, 430.f);
@@ -70,7 +56,7 @@ Game::Game()
     coin3->coinCollect(hud, items, { 800.f, 430.f });
 
     Coin* coin4 = new Coin(1150.f, 430.f);
-    coin4->coinCollect(hud, items, { 1150.f, 430.f });
+    coin4->coinCollect(hud, items, { 1150.f, 430.f });*/
 
 }
 
@@ -291,7 +277,6 @@ void Game::render()
         exit_button.draw(window);
     }
 
-
     window.display();
 }
 
@@ -307,10 +292,34 @@ void Game::resetGame() {
     platform.resetPlatform();
     platform2.resetPlatform();
     platform3.resetPlatform();
+
+    Coin::resetCounters();
     hud.reset();
+    items.clear();
+	spawnCoins();
 }
 
-void spawnItem(sf::Vector2f position) {
+void Game::spawnCoins() {
 
+    items.emplace_back(std::make_unique<Coin>(400.f, 430.f));
+    items.back()->setOnPickup([this](Player& p) {
+        hud.addScore(10); // wynik
+        });
 
+    items.emplace_back(std::make_unique<Coin>(500.f, 430.f));
+    items.back()->setOnPickup([this](Player& p) {
+        hud.addScore(10); // wynik
+        });
+
+    items.emplace_back(std::make_unique<Coin>(800.f, 430.f));
+    items.back()->setOnPickup([this](Player& p) {
+        hud.addScore(10); // wynik
+        });
+
+    items.emplace_back(std::make_unique<Coin>(1150.f, 430.f));
+    items.back()->setOnPickup([this](Player& p) {
+        hud.addScore(10); // wynik
+        });
+
+    hud.reset();
 }

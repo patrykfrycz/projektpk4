@@ -41,7 +41,8 @@ int Coin::getCollectedPoints() { return collectedPoints; }
 
 
 void Coin::resetCounters() {
-    collectedCount = 0; collectedPoints = 0;
+    collectedCount = 0;
+    collectedPoints = 0;
 }
 
 void Coin::coinCollect(HUD& hud, std::vector<std::unique_ptr<Item>>& items, sf::Vector2f position) {
@@ -51,3 +52,4 @@ void Coin::coinCollect(HUD& hud, std::vector<std::unique_ptr<Item>>& items, sf::
         hud.addScore(10);
         });
 }
+

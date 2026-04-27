@@ -18,14 +18,6 @@ void HUD::init(const sf::Font& font) {
     scoreText->setPosition({ 300.f, 14.f });
 
     coinText = std::make_unique<sf::Text>(font, "Coins: 0 (0)", 20u);
-
-    /*if (!coinTexture.loadFromFile("coin.png")) {
-        coinIcon.setFillColor(sf::Color::Yellow);
-    }
-    else {
-        coinIcon.setTexture(&coinTexture);
-    }*/
-
     coinText->setFillColor(sf::Color::Yellow);
     coinText->setOutlineThickness(2.f);
     coinText->setOutlineColor(sf::Color::Black);
@@ -33,7 +25,7 @@ void HUD::init(const sf::Font& font) {
 
     const float iconRadius = 10.f;
     coinIcon.setRadius(iconRadius);
-    coinIcon.setFillColor(sf::Color::Yellow); // gold
+    coinIcon.setFillColor(sf::Color::Yellow);
     coinIcon.setOutlineColor(sf::Color(150, 120, 0));
     coinIcon.setOutlineThickness(1.f);
 
@@ -41,14 +33,14 @@ void HUD::init(const sf::Font& font) {
     background.setFillColor(sf::Color(0, 0, 0, 150));
     //background.setPosition({ 8.f, 8.f });
 
-
     reset();
 }
 
 void HUD::update() {
-    // odczytujemy statystyki coinów i aktualizujemy teksty
+    //odczytujemy statystyki coinów i aktualizujemy teksty
     setCoins(Coin::getCollectedCount(), Coin::getCollectedPoints());
     updateScoreText();
+    //updateCoinText();
 }
 
 void HUD::draw(sf::RenderWindow& window) const {
@@ -73,9 +65,8 @@ int HUD::getScore() const {
     return score;
 }
 
-void HUD::setCoins(int count, int points) {
-    coins = count;
-    coinPoints = points;
+void HUD::setCoins(int coin, int points) {
+    coins = coin;
     updateCoinText();
 }
 
@@ -98,12 +89,12 @@ void HUD::updateCoinText() {
 void HUD::reset() {
     score = 0;
     coins = 0;
-    coinPoints = 0;
+    //coinPoints = 0;
 
     lastScore = -1;
     lastCoins = -1;
-    lastCoinPoints = -1;
+    //lastCoinPoints = -1;
 
-    setCoins(coins, coinPoints);
-    setScore(score);
+    //updateScoreText();
+	//updateCoinText();
 }

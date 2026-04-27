@@ -61,4 +61,6 @@ public:
 	void run(); // Wrzucamy do niej g³ówn¹ pêtlê "while(window.isOpen())",
 
 	void resetGame();
+
+	void spawnCoins();
 };
