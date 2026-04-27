@@ -5,9 +5,11 @@
 
 class Coin : public Item {
 public:
-    Coin(float x, float y, float size = 24.f);
+    Coin(float x, float y, float size = 45.f);
     void update() override;
     void onPickup(Player& player) override;
+
+	sf::Texture texture;
 
     static int getCollectedCount();
     static int getCollectedPoints();

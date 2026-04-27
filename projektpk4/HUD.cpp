@@ -18,6 +18,14 @@ void HUD::init(const sf::Font& font) {
     scoreText->setPosition({ 300.f, 14.f });
 
     coinText = std::make_unique<sf::Text>(font, "Coins: 0 (0)", 20u);
+
+    /*if (!coinTexture.loadFromFile("coin.png")) {
+        coinIcon.setFillColor(sf::Color::Yellow);
+    }
+    else {
+        coinIcon.setTexture(&coinTexture);
+    }*/
+
     coinText->setFillColor(sf::Color::Yellow);
     coinText->setOutlineThickness(2.f);
     coinText->setOutlineColor(sf::Color::Black);

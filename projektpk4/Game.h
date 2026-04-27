@@ -49,6 +49,8 @@ private:
 	//Platform ground6;
 
 	Platform platform;
+	Platform platform2;
+	Platform platform3;
 
 	HUD hud;
 

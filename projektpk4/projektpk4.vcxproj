@@ -179,6 +179,7 @@
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Desktop\coin.png" />
     <Image Include="..\..\..\..\Desktop\tlo.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

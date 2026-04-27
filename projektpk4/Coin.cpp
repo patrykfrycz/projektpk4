@@ -9,9 +9,18 @@ int Coin::collectedPoints = 0;
 Coin::Coin(float x, float y, float size)
     : Item(ItemType::Coin, x, y, size, size), bobPhase(0.f), value(value)
 {
-    shape.setFillColor(sf::Color::Yellow);
-    shape.setOutlineColor(sf::Color::Yellow);
-    shape.setOutlineThickness(1.f);
+    if (!texture.loadFromFile("coin.png")) {
+        shape.setFillColor(sf::Color::Yellow);
+    }
+    else {
+        shape.setTexture(&texture);
+    }
+
+    //shape.setFillColor(sf::Color::Yellow);
+    //shape.setOutlineColor(sf::Color::Yellow);
+    shape.setOutlineThickness(0.f);
+
+
 }
 
 void Coin::update() {

@@ -10,13 +10,13 @@ Item::Item(ItemType t, float x, float y, float width, float height)
     shape.setOutlineThickness(0.f);
 	shape.setFillColor(sf::Color::White);
 
-    // proste kolory zale¿ne od typu (mo¿esz zamieniæ na tekstury)
-    switch (type) {
-    case ItemType::Coin:     shape.setFillColor(sf::Color::Yellow); break;
-    case ItemType::Mushroom: shape.setFillColor(sf::Color(200, 50, 50)); break;
-    case ItemType::Flower:   shape.setFillColor(sf::Color::Magenta); break;
-    case ItemType::Star:     shape.setFillColor(sf::Color::Cyan); break;
-    }
+    //// proste kolory zale¿ne od typu (mo¿esz zamieniæ na tekstury)
+    //switch (type) {
+    //case ItemType::Coin:     shape.setFillColor(sf::Color::Yellow); break;
+    //case ItemType::Mushroom: shape.setFillColor(sf::Color(200, 50, 50)); break;
+    //case ItemType::Flower:   shape.setFillColor(sf::Color::Magenta); break;
+    //case ItemType::Star:     shape.setFillColor(sf::Color::Cyan); break;
+    //}
 }
 
 void Item::update() {

@@ -70,5 +70,8 @@
     <Image Include="..\..\..\..\Desktop\tlo.png">
       <Filter>Pliki zasobów</Filter>
     </Image>
+    <Image Include="..\..\..\..\Desktop\coin.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
   </ItemGroup>
 </Project>

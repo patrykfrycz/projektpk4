@@ -16,6 +16,8 @@ public:
 
     void setCoins(int count, int points);
 
+	sf::Texture coinTexture;
+
 private:
     void updateScoreText();
     void updateCoinText();

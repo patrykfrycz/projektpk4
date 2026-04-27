@@ -26,7 +26,9 @@ Game::Game()
     //ground5(0.f, 500.f, 1000.f, 100.f),
     //ground6(0.f, 500.f, 1200.f, 100.f)
 
-	platform(400.f, 300.f, 300.f, 50.f)
+    platform(400.f, 300.f, 300.f, 50.f),
+    platform2(1000.f, 300.f, 200.f, 50.f),
+	platform3(1500.f, 300.f, 450.f, 50.f)
 {
     window.setFramerateLimit(60);
     currentState = GameState::Menu;
@@ -58,17 +60,17 @@ Game::Game()
     //    hud.addScore(10); // wynik
     //    });
 
-	Coin* coin1 = new Coin(420.f, 460.f);
-    coin1->coinCollect(hud, items, { 420.f, 460.f });
+	Coin* coin1 = new Coin(400.f, 430.f);
+    coin1->coinCollect(hud, items, { 400.f, 430.f });
 
-    Coin* coin2 = new Coin(460.f, 460.f);
-    coin2->coinCollect(hud, items, { 460.f, 460.f });
+    Coin* coin2 = new Coin(500.f, 430.f);
+    coin2->coinCollect(hud, items, { 500.f, 430.f });
 
-    Coin* coin3 = new Coin(800.f, 460.f);
-    coin3->coinCollect(hud, items, { 800.f, 460.f });
+    Coin* coin3 = new Coin(800.f, 430.f);
+    coin3->coinCollect(hud, items, { 800.f, 430.f });
 
-    Coin* coin4 = new Coin(1150.f, 460.f);
-    coin4->coinCollect(hud, items, { 1150.f, 460.f });
+    Coin* coin4 = new Coin(1150.f, 430.f);
+    coin4->coinCollect(hud, items, { 1150.f, 430.f });
 
 }
 
@@ -216,7 +218,8 @@ void Game::update()
         ground4.resolveCollision(mario);
 
         platform.resolveCollision(mario);
-
+		platform2.resolveCollision(mario);
+		platform3.resolveCollision(mario);
 
         //Jeœli mario poza ekranem to koniec gry
         if (mario.getY()>600.f) {
@@ -262,6 +265,8 @@ void Game::render()
         ground4.draw(window);
 
         platform.draw(window);
+        platform2.draw(window);
+        platform3.draw(window);
 
         for (auto& it : items) {
             if (it && it->isActive()) it->draw(window);
@@ -300,6 +305,8 @@ void Game::resetGame() {
     ground4.resetPlatform();
 
     platform.resetPlatform();
+    platform2.resetPlatform();
+    platform3.resetPlatform();
     hud.reset();
 }
 
