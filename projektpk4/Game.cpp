@@ -42,9 +42,16 @@ Game::Game()
         // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
     }
 
+    if (!enemyTexture.loadFromFile("goomba.png"))
+    {
+        // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
+    }
+
 	hud.init(font);
 
 	spawnCoins();
+
+    spawnEnemies();
 
 	/*Coin* coin1 = new Coin(400.f, 430.f);
     coin1->coinCollect(hud, items, { 400.f, 430.f });
@@ -152,6 +159,11 @@ void Game::processEvents()
 
 void Game::update()
 {
+    //zegar gry
+    sf::Time time = clock.restart();
+    float deltaTime = time.asSeconds();
+
+
     //w ponizszych if-ach aktualizujemy pozycje np gracza lub innych obiektow ktore sie szybko zmieniaja
     if (currentState == GameState::Playing) {
         mario.update();
@@ -212,6 +224,10 @@ void Game::update()
             currentState = GameState::GameOver;
         }
 
+        for (auto& enemy : enemies) {
+            enemy->update(deltaTime);
+        }
+
         for (auto& it : items) {
             if (!it->isActive()) continue;
             it->update();
@@ -258,6 +274,10 @@ void Game::render()
             if (it && it->isActive()) it->draw(window);
         }
 
+        for (auto& enemy : enemies) {
+            enemy->draw(window);
+        }
+
         window.setView(window.getDefaultView());
         pause_button.draw(window);
         hud.update();
@@ -297,6 +317,9 @@ void Game::resetGame() {
     hud.reset();
     items.clear();
 	spawnCoins();
+
+    enemies.clear(); 
+    //spawnEnemies();
 }
 
 void Game::spawnCoins() {
@@ -322,4 +345,10 @@ void Game::spawnCoins() {
         });
 
     hud.reset();
+}
+
+void Game::spawnEnemies() {
+
+    enemies.emplace_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(600.f, 450.f)));
+
 }

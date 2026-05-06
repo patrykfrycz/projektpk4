@@ -6,6 +6,7 @@
 #include "Item.h"
 #include "Coin.h"
 #include "HUD.h"
+#include "Enemy.h"
 
 enum class GameState {
 	Menu,
@@ -56,6 +57,11 @@ private:
 
 	sf::View camera;//poruszanie sie ekranu
 
+	sf::Clock clock;
+
+	std::vector<std::unique_ptr<Enemy>> enemies; // Pude³ko na naszych przeciwników
+	sf::Texture enemyTexture; // Pamiêæ na grafikê wroga
+
 public:
 	Game(); // KONSTRUKTOR. S³u¿y do ustawienia ustawieñ pocz¹tkowych (rozmiaru okna, tytu³u).
 	void run(); // Wrzucamy do niej g³ówn¹ pêtlê "while(window.isOpen())",
@@ -63,4 +69,6 @@ public:
 	void resetGame();
 
 	void spawnCoins();
+
+	void spawnEnemies();
 };
