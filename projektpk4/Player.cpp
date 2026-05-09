@@ -72,3 +72,8 @@ void Player::setY(float y) {
 	shape.setPosition({ shape.getPosition().x, y });
 	speedY = 0.f;
 }
+
+void Player::bounceUp() {
+	speedY = -jumpPower * 0.7f;
+	canJump = false;
+}

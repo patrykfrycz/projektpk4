@@ -7,6 +7,7 @@
 #include "Coin.h"
 #include "HUD.h"
 #include "Enemy.h"
+#include <algorithm>
 
 enum class GameState {
 	Menu,

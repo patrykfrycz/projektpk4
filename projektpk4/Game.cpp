@@ -42,9 +42,8 @@ Game::Game()
         // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
     }
 
-    if (!enemyTexture.loadFromFile("goomba.png"))
-    {
-        // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
+    if (!enemyTexture.loadFromFile("goombas.png")) {
+        // Jeœli pliku nie ma, program nadal ruszy, ale wyœwietli w konsoli b³¹d od SFML
     }
 
 	hud.init(font);
@@ -226,6 +225,32 @@ void Game::update()
 
         for (auto& enemy : enemies) {
             enemy->update(deltaTime);
+
+            enemy->resolveCollision(ground);
+            enemy->resolveCollision(ground2);
+            enemy->resolveCollision(ground3);
+            enemy->resolveCollision(ground4);
+            enemy->resolveCollision(platform);
+            enemy->resolveCollision(platform2);
+            enemy->resolveCollision(platform3);
+
+
+            if (mario.getBounds().findIntersection(enemy->getBounds()).has_value()) {
+                auto intersectionOpt = mario.getBounds().findIntersection(enemy->getBounds());
+
+                if (intersectionOpt.has_value() && !enemy->isSquashed()) {
+                    sf::FloatRect inter = intersectionOpt.value();
+
+                    if (inter.size.x > inter.size.y && mario.getY() < enemy->getBounds().position.y) {
+                        enemy->squash();   
+                        mario.bounceUp();  
+                        hud.addScore(100); 
+                    }
+                    else {
+                        currentState = GameState::GameOver;
+                    }
+                }
+            }
         }
 
         for (auto& it : items) {
@@ -235,6 +260,10 @@ void Game::update()
                 it->onPickup(mario);
             }
         }
+
+        std::erase_if(enemies, [](const std::unique_ptr<Enemy>& e) {
+            return e->isReadyToRemove();
+            });
     }
 }
 
@@ -259,7 +288,6 @@ void Game::render()
     {
         window.clear(sf::Color::Black);
         window.setView(camera);
-        mario.draw(window);
 
         ground.draw(window);
         ground2.draw(window);
@@ -275,11 +303,17 @@ void Game::render()
         }
 
         for (auto& enemy : enemies) {
-            enemy->draw(window);
+            if (enemy) { 
+                enemy->draw(window);
+            }
         }
+
+        mario.draw(window);
 
         window.setView(window.getDefaultView());
         pause_button.draw(window);
+
+
         hud.update();
         hud.draw(window);
     }
@@ -319,7 +353,9 @@ void Game::resetGame() {
 	spawnCoins();
 
     enemies.clear(); 
-    //spawnEnemies();
+    spawnEnemies();
+
+    clock.restart();
 }
 
 void Game::spawnCoins() {
@@ -349,6 +385,8 @@ void Game::spawnCoins() {
 
 void Game::spawnEnemies() {
 
-    enemies.emplace_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(600.f, 450.f)));
+    enemies.emplace_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(450.f, 440.f)));
+
+    enemies.emplace_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(900.f, 440.f)));
 
 }

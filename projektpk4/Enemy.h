@@ -1,25 +1,27 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "Platform.h"
 
 class Enemy {
 private:
     sf::Sprite sprite;
     sf::Vector2f vecspeed;
     float walkSpeed;
+    float gravity;
+
+    bool squashed = false;
+    float deathTimer = 0.f;
 
 public:
-    // Konstruktor: ustawia teksturê i pozycjê startow¹
     Enemy(sf::Texture& texture, sf::Vector2f startPos);
-
-    // Aktualizacja logiki (ruch)
     void update(float deltaTime);
-
-    // Rysowanie w oknie
     void draw(sf::RenderWindow& window);
-
-    // Funkcja do odbijania moba od œcian
     void bounce();
-
-    // Pobranie granic sprite'a (przydatne do kolizji)
     sf::FloatRect getBounds() const;
+
+    void resolveCollision(const Platform& platform);
+
+    void squash();
+    bool isSquashed() const;
+    bool isReadyToRemove() const;
 };
