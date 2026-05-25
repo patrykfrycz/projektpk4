@@ -71,22 +71,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(SolutionDir)\libraries\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)libraries\include\;$(IncludePath)</IncludePath>
     <ReferencePath>$(SolutionDir)\libraries\lib;$(ReferencePath)</ReferencePath>
     <LibraryPath>$(SolutionDir)\libraries\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)\libraries\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)libraries\include\;$(IncludePath)</IncludePath>
     <ReferencePath>$(SolutionDir)\libraries\lib;$(ReferencePath)</ReferencePath>
     <LibraryPath>$(SolutionDir)\libraries\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)\libraries\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)libraries\include\;$(IncludePath)</IncludePath>
     <ReferencePath>$(SolutionDir)\libraries\lib;$(ReferencePath)</ReferencePath>
     <LibraryPath>$(SolutionDir)\libraries\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)\libraries\include\;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)libraries\include\;$(IncludePath)</IncludePath>
     <ReferencePath>$(SolutionDir)\libraries\lib;$(ReferencePath)</ReferencePath>
     <LibraryPath>$(SolutionDir)\libraries\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>

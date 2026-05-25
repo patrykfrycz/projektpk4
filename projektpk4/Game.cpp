@@ -37,6 +37,12 @@ Game::Game()
     camera.setSize({ 800.f, 600.f });
     camera.setCenter({ 400.f, 300.f });
 
+    if (!marioTex.loadFromFile("mariotex.png")) {
+        // tutaj obs³uga b³êdu, jeœli plik nie istnieje
+    }
+
+    mario.initTexture(marioTex);
+
     if (!font.openFromFile("ALGER.ttf"))
     {
         // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli

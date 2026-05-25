@@ -23,7 +23,8 @@ private:
 	GameState currentState; // Zmienna przechowuj¹ca informacjê, na którym ekranie aktualnie jesteœmy
 	GameState previousState; // Zmienna przechowuj¹ca informacjê, na którym ekranie przebywalismy poprzednio
 
-	Player mario; //tworzymy obiekt Mario
+	Player mario;
+	sf::Texture marioTex;
 
 	sf::Font font; //czcionka do przyciskow
 	Button play_button;

@@ -1,10 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <optional>
 
 class Player
 {
 private:
-    sf::RectangleShape shape; // Kszta³t gracza 
+    std::optional<sf::Sprite> sprite;        
+
     float speed;              // Prêdkoœæ chodzenia na boki
     float gravity;            // Si³a grawitacji (jak szybko spada)
 
@@ -12,30 +14,29 @@ private:
     float jumpPower; //si³a skoku
     bool canJump; //czy dotyka ziemi zeby skoczyc
 
+    sf::Clock animClock; // Zegar odmierzaj¹cy czas miêdzy klatkami
+    int animFrame = 0;
+
+    sf::IntRect standFrame;
+    std::vector<sf::IntRect> walkFrames;
+    sf::IntRect jumpFrame;
 
 public:
-    // Konstruktor - ustawi pozycjê startow¹ gracza
+   
     Player();
 
-    // Metoda licz¹ca fizykê i sprawdzaj¹ca klawiaturê
-    void update();
+    void initTexture(const sf::Texture& texture);
 
-    // Metoda rysuj¹ca gracza na oknie
+    void update();
     void draw(sf::RenderWindow& window);
 
-    // Kolizje
     sf::FloatRect getBounds() const;
-
-    // Metoda do zaprzestania spadania dzieki kolizji z platforma
     void stopFalling(float platformTopY);
-
     void reset();
 
     float getX() const;
     float getY() const;
-
     void setX(float x);
-	void setY(float y);
-
+    void setY(float y);
     void bounceUp();
 };
