@@ -7,7 +7,7 @@ Enemy::Enemy(sf::Texture& texture, sf::Vector2f startPos) : sprite(texture) {
 
     sprite.setTextureRect(sf::IntRect({ 0, 0 }, { frameWidth, frameHeight }));
     sprite.setPosition(startPos);
-    sprite.setScale({ 3.f, 3.f });
+    sprite.setScale({ 2.5f, 2.5f });
 
     walkSpeed = -100.f;
     gravity = 400.f; 

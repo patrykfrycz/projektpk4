@@ -48,12 +48,39 @@ private:
 	Platform ground2;
 	Platform ground3;
 	Platform ground4;
-	//Platform ground5;
-	//Platform ground6;
+	Platform ground5;
+	Platform ground6;
+	Platform ground7;
+	Platform ground8;
+	Platform ground9;
 
 	Platform platform;
 	Platform platform2;
 	Platform platform3;
+	Platform platform4;
+	Platform platform5;
+	Platform platform6;
+	Platform platform7;
+	Platform platform8;
+	Platform platform9;
+	Platform platform10;
+	Platform platform11;
+	Platform platform12;
+	Platform platform13;
+
+	Platform pipe1;
+	//Platform pipe2;
+	//Platform pipe3;
+	//Platform pipe4;
+	//Platform pipe5;
+
+	sf::Texture pipeTex;
+	sf::Texture platformTex;
+	sf::Texture groundTex;
+
+	sf::Texture backgroundTex;
+	std::optional<sf::Sprite> background;
+	
 
 	HUD hud;
 

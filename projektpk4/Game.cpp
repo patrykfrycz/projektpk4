@@ -19,16 +19,31 @@ Game::Game()
     pause_button(20.f, 20.f, 90.f, 25.f, font, "PAUZA"),
     menu_button(300.f, 200.f, 375.f, 205.f, font, "MENU"),
 
-    ground(0.f, 500.f, 500.f, 100.f), // Dodajemy platformê
-    ground2(600.f, 500.f, 400.f, 100.f),
-    ground3(1100.f, 500.f, 1000.f, 100.f),
-    ground4(2200.f, 500.f, 800.f, 100.f),
-    //ground5(0.f, 500.f, 1000.f, 100.f),
-    //ground6(0.f, 500.f, 1200.f, 100.f)
+    ground(0.f, 500.f, 1500.f, 100.f),
+    ground2(1600.f, 500.f, 2000.f, 100.f),
+    ground3(3700.f, 500.f, 1000.f, 100.f),
+    ground4(4800.f, 500.f, 1500.f, 100.f),
+    ground5(6400.f, 500.f, 2000.f, 100.f),
+    ground6(8500.f, 500.f, 1000.f, 100.f),
+    ground7(9600.f, 500.f, 2000.f, 100.f),
+    ground8(11700.f, 500.f, 2500.f, 100.f),
+    ground9(14300.f, 500.f, 4000.f, 100.f),
 
     platform(400.f, 300.f, 300.f, 50.f),
     platform2(1000.f, 300.f, 200.f, 50.f),
-	platform3(1500.f, 300.f, 450.f, 50.f)
+    platform3(1700.f, 300.f, 450.f, 50.f),
+    platform4(2500.f, 300.f, 200.f, 50.f),
+    platform5(4000.f, 300.f, 300.f, 50.f),
+    platform6(5300.f, 300.f, 400.f, 50.f),
+    platform7(6800.f, 300.f, 450.f, 50.f),
+    platform8(7300.f, 100.f, 200.f, 50.f),
+    platform9(9000.f, 300.f, 300.f, 50.f),
+    platform10(10500.f, 300.f, 400.f, 50.f),
+    platform11(11000.f, 100.f, 200.f, 50.f),
+    platform12(12000.f, 300.f, 200.f, 50.f),
+    platform13(13300.f, 300.f, 400.f, 50.f),
+
+    pipe1(1430.f, 406.f, 70.f, 94.f)
 {
     window.setFramerateLimit(60);
     currentState = GameState::Menu;
@@ -43,6 +58,50 @@ Game::Game()
 
     mario.initTexture(marioTex);
 
+    // --- TUTAJ JEST DODANY KOD WGRAWJ¥CY TEKSTURÊ PLATFORM ---
+    if (!groundTex.loadFromFile("ground.png")) {
+        // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
+    }
+    groundTex.setRepeated(true);
+
+    if (!platformTex.loadFromFile("platform.png")) {
+        // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
+    }
+    platformTex.setRepeated(true);
+
+    if (!pipeTex.loadFromFile("toppipe.png")) {
+        // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
+    }
+
+    if (!backgroundTex.loadFromFile("tlo.png")) {
+        // tutaj obs³uga b³êdu
+    }
+    background.emplace(backgroundTex);
+
+    ground.initTexture(groundTex);
+    ground2.initTexture(groundTex);
+    ground3.initTexture(groundTex);
+    ground4.initTexture(groundTex);
+    ground5.initTexture(groundTex);
+    ground6.initTexture(groundTex);
+    ground7.initTexture(groundTex);
+    ground8.initTexture(groundTex);
+    ground9.initTexture(groundTex);
+    platform.initTexture(platformTex);
+    platform2.initTexture(platformTex);
+    platform3.initTexture(platformTex);
+    platform4.initTexture(platformTex);
+    platform5.initTexture(platformTex);
+    platform6.initTexture(platformTex);
+    platform7.initTexture(platformTex);
+    platform8.initTexture(platformTex);
+    platform9.initTexture(platformTex);
+    platform10.initTexture(platformTex);
+    platform11.initTexture(platformTex);
+    platform12.initTexture(platformTex);
+    platform13.initTexture(platformTex);
+    pipe1.initTexture(pipeTex);
+
     if (!font.openFromFile("ALGER.ttf"))
     {
         // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
@@ -52,13 +111,13 @@ Game::Game()
         // Jeœli pliku nie ma, program nadal ruszy, ale wyœwietli w konsoli b³¹d od SFML
     }
 
-	hud.init(font);
+    hud.init(font);
 
-	spawnCoins();
+    spawnCoins();
 
     spawnEnemies();
 
-	/*Coin* coin1 = new Coin(400.f, 430.f);
+    /*Coin* coin1 = new Coin(400.f, 430.f);
     coin1->coinCollect(hud, items, { 400.f, 430.f });
 
     Coin* coin2 = new Coin(500.f, 430.f);
@@ -69,7 +128,6 @@ Game::Game()
 
     Coin* coin4 = new Coin(1150.f, 430.f);
     coin4->coinCollect(hud, items, { 1150.f, 430.f });*/
-
 }
 
 void Game::run()
@@ -219,10 +277,27 @@ void Game::update()
         ground2.resolveCollision(mario);
         ground3.resolveCollision(mario);
         ground4.resolveCollision(mario);
+        ground5.resolveCollision(mario);
+        ground6.resolveCollision(mario);
+        ground7.resolveCollision(mario);
+        ground8.resolveCollision(mario);
+        ground9.resolveCollision(mario);
 
         platform.resolveCollision(mario);
 		platform2.resolveCollision(mario);
 		platform3.resolveCollision(mario);
+        platform4.resolveCollision(mario);
+        platform5.resolveCollision(mario);
+        platform6.resolveCollision(mario);
+        platform7.resolveCollision(mario);
+        platform8.resolveCollision(mario);
+        platform9.resolveCollision(mario);
+        platform10.resolveCollision(mario);
+        platform11.resolveCollision(mario);
+        platform12.resolveCollision(mario);
+        platform13.resolveCollision(mario);
+
+        pipe1.resolveCollision(mario);
 
         //Jeœli mario poza ekranem to koniec gry
         if (mario.getY()>600.f) {
@@ -236,6 +311,11 @@ void Game::update()
             enemy->resolveCollision(ground2);
             enemy->resolveCollision(ground3);
             enemy->resolveCollision(ground4);
+            enemy->resolveCollision(ground5);
+            enemy->resolveCollision(ground6);
+            enemy->resolveCollision(ground7);
+            enemy->resolveCollision(ground8);
+            enemy->resolveCollision(ground9);
             enemy->resolveCollision(platform);
             enemy->resolveCollision(platform2);
             enemy->resolveCollision(platform3);
@@ -293,16 +373,39 @@ void Game::render()
     else if (currentState == GameState::Playing)
     {
         window.clear(sf::Color::Black);
+
+        window.setView(window.getDefaultView());
+        if (background.has_value()) {
+            window.draw(*background); 
+        }
+
         window.setView(camera);
 
         ground.draw(window);
         ground2.draw(window);
         ground3.draw(window);
         ground4.draw(window);
+        ground5.draw(window);
+        ground6.draw(window);
+        ground7.draw(window);
+        ground8.draw(window);
+        ground9.draw(window);
 
         platform.draw(window);
         platform2.draw(window);
         platform3.draw(window);
+        platform4.draw(window);
+        platform5.draw(window);
+        platform6.draw(window);
+        platform7.draw(window);
+        platform8.draw(window);
+        platform9.draw(window);
+        platform10.draw(window);
+        platform11.draw(window);
+        platform12.draw(window);
+        platform13.draw(window);
+
+        pipe1.draw(window);
 
         for (auto& it : items) {
             if (it && it->isActive()) it->draw(window);
@@ -348,10 +451,18 @@ void Game::resetGame() {
     ground2.resetPlatform();
     ground3.resetPlatform();
     ground4.resetPlatform();
+    ground5.resetPlatform();
+    ground6.resetPlatform();
+    ground7.resetPlatform();
+    ground8.resetPlatform();
+    ground9.resetPlatform();
+
 
     platform.resetPlatform();
     platform2.resetPlatform();
     platform3.resetPlatform();
+
+    pipe1.resetPlatform();
 
     Coin::resetCounters();
     hud.reset();

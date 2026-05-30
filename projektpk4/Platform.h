@@ -1,19 +1,23 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <optional>
 #include "Player.h"
 
 class Platform {
 private:
-	sf::RectangleShape shape;
-	sf::Vector2f initialPosition;
+    std::optional<sf::Sprite> sprite;
+    sf::Vector2f initialPosition;
+    sf::Vector2f size; // Zmienna do zapamiêtania wymiarów ca³ej platformy
 public:
-	Platform(float x, float y, float width, float height);
+    Platform(float x, float y, float width, float height);
 
-	void draw(sf::RenderWindow& window);
+    void initTexture(const sf::Texture& texture);
 
-	sf::FloatRect getBounds() const;
+    void draw(sf::RenderWindow& window);
 
-	void resetPlatform();
+    sf::FloatRect getBounds() const;
 
-	void resolveCollision(Player& player) const;
+    void resetPlatform();
+
+    void resolveCollision(Player& player) const;
 };
