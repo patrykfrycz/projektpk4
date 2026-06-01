@@ -107,7 +107,11 @@ Game::Game()
         // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
     }
 
-    if (!enemyTexture.loadFromFile("goombas.png")) {
+    if (!goombaTexture.loadFromFile("goombas.png")) {
+        // Jeœli pliku nie ma, program nadal ruszy, ale wyœwietli w konsoli b³¹d od SFML
+    }
+
+    if (!troopaTexture.loadFromFile("troopa.png")) {
         // Jeœli pliku nie ma, program nadal ruszy, ale wyœwietli w konsoli b³¹d od SFML
     }
 
@@ -502,8 +506,10 @@ void Game::spawnCoins() {
 
 void Game::spawnEnemies() {
 
-    enemies.emplace_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(450.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(450.f, 440.f), 18, 22));
 
-    enemies.emplace_back(std::make_unique<Enemy>(enemyTexture, sf::Vector2f(900.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(900.f, 440.f), 18, 22));
+
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(1100.f, 440.f), 16, 22));
 
 }

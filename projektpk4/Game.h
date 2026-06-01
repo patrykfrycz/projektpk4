@@ -89,7 +89,8 @@ private:
 	sf::Clock clock;
 
 	std::vector<std::unique_ptr<Enemy>> enemies; // Pude³ko na naszych przeciwników
-	sf::Texture enemyTexture; // Pamiêæ na grafikê wroga
+	sf::Texture goombaTexture; // Pamiêæ na grafikê wroga
+	sf::Texture troopaTexture;
 
 public:
 	Game(); // KONSTRUKTOR. S³u¿y do ustawienia ustawieñ pocz¹tkowych (rozmiaru okna, tytu³u).

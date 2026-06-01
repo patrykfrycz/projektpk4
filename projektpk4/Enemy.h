@@ -13,7 +13,7 @@ private:
     float deathTimer = 0.f;
 
 public:
-    Enemy(sf::Texture& texture, sf::Vector2f startPos);
+    Enemy(sf::Texture& texture, sf::Vector2f startPos, int frameWidth, int frameHeight);
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
     void bounce();

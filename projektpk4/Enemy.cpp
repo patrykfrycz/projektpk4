@@ -1,9 +1,8 @@
 #include "Enemy.h"
 #include "Platform.h" 
 
-Enemy::Enemy(sf::Texture& texture, sf::Vector2f startPos) : sprite(texture) {
-    int frameWidth = 18;
-    int frameHeight = 22;
+Enemy::Enemy(sf::Texture& texture, sf::Vector2f startPos, int frameWidth, int frameHeight) : sprite(texture) {
+    
 
     sprite.setTextureRect(sf::IntRect({ 0, 0 }, { frameWidth, frameHeight }));
     sprite.setPosition(startPos);
