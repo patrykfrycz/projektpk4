@@ -1,35 +1,29 @@
 #include "Button.h"
 
-
-Button::Button(float x, float y, float tx, float ty, const sf::Font& font, std::string buttonText) : text(font) {
-    shape.setSize({ 220.f, 40.f });
-    shape.setFillColor(sf::Color::White);
-    shape.setPosition({ x, y });
-
-    //napis na przycisku
-    text.setString(buttonText);
-    text.setCharacterSize(24);
-    text.setFillColor(sf::Color::Black); // Czarny napis na bia³ym tle
-    text.setPosition({ tx, ty });
+Button::Button(float x, float y) {
+    position = { x, y };
 }
 
-// 2. Rysowanie przycisku
+void Button::initTexture(const sf::Texture& texture) {
+    sprite.emplace(texture);
+    sprite->setPosition(position);
+
+}
+
 void Button::draw(sf::RenderWindow& window) {
-    window.draw(shape);
-    window.draw(text);
+    if (sprite.has_value()) {
+        window.draw(*sprite);
+    }
 }
 
-// 3. Sprawdzanie, czy myszka w niego kliknê³a
-bool Button::isClicked(sf::RenderWindow& window) {
-    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+bool Button::isClicked(const sf::RenderWindow& window) const {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-    sf::FloatRect btnArea = shape.getGlobalBounds();
-
-    if (btnArea.contains(sf::Vector2f(mousePos))) {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+        if (sprite.has_value() && sprite->getGlobalBounds().contains(worldPos)) {
             return true;
         }
     }
-
     return false;
 }

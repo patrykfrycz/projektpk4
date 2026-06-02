@@ -2,6 +2,11 @@
 #include <SFML/Graphics.hpp>
 #include "Platform.h"
 
+enum class EnemyType {
+    Goomba,
+    Troopa
+};
+
 class Enemy {
 private:
     sf::Sprite sprite;
@@ -12,8 +17,10 @@ private:
     bool squashed = false;
     float deathTimer = 0.f;
 
+    EnemyType type;
+
 public:
-    Enemy(sf::Texture& texture, sf::Vector2f startPos, int frameWidth, int frameHeight);
+    Enemy(sf::Texture& texture, sf::Vector2f startPos, int frameWidth, int frameHeight, EnemyType type);
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
     void bounce();
