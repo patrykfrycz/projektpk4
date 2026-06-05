@@ -4,7 +4,7 @@
 #include "Player.h"
 
 class Platform {
-private:
+protected:
     std::optional<sf::Sprite> sprite;
     sf::Vector2f initialPosition;
     sf::Vector2f size; // Zmienna do zapamiêtania wymiarów ca³ej platformy

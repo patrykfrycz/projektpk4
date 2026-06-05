@@ -8,6 +8,7 @@
 #include "Coin.h"
 #include "HUD.h"
 #include "Enemy.h"
+#include "MysteryBlock.h"
 #include <algorithm>
 
 enum class GameState {
@@ -20,9 +21,9 @@ enum class GameState {
 
 class Game {
 private:
-	sf::RenderWindow window; // Obiekt reprezentuj¹cy prawdziwe okienko Windowsa
-	GameState currentState; // Zmienna przechowuj¹ca informacjê, na którym ekranie aktualnie jesteœmy
-	GameState previousState; // Zmienna przechowuj¹ca informacjê, na którym ekranie przebywalismy poprzednio
+	sf::RenderWindow window; 
+	GameState currentState; 
+	GameState previousState;
 
 	Player mario;
 	sf::Texture marioTex;
@@ -55,7 +56,7 @@ private:
 
 	void spawnItem(sf::Vector2f position);
 
-	Platform ground; //platormy
+	Platform ground; 
 	Platform ground2;
 	Platform ground3;
 	Platform ground4;
@@ -69,6 +70,7 @@ private:
 	Platform ground12;
 
 	Platform platform;
+	Platform platform1;
 	Platform platform2;
 	Platform platform3;
 	Platform platform4;
@@ -94,6 +96,10 @@ private:
 	Platform pipe3;
 	Platform pipe4;
 	Platform pipe5;
+
+	sf::Texture blockTex; 
+	sf::Texture blockUsedTex;   
+	std::vector<std::unique_ptr<MysteryBlock>> blocks;
 
 	sf::Texture pipeTex;
 	sf::Texture platformTex;

@@ -35,7 +35,8 @@ Game::Game()
     ground11(12300.f, 500.f, 1200.f, 100.f),
     ground12(13800.f, 500.f, 2000.f, 100.f),
 
-    platform(400.f, 350.f, 150.f, 50.f),
+    platform(400.f, 350.f, 50.f, 50.f),
+    platform1(500.f, 350.f, 50.f, 50.f),
     platform2(600.f, 200.f, 100.f, 50.f),
     platform3(1220.f, 400.f, 100.f, 50.f),
     platform4(1650.f, 300.f, 200.f, 50.f),
@@ -61,6 +62,7 @@ Game::Game()
     pipe3(2180.f, 406.f, 70.f, 94.f),
     pipe4(2450.f, 406.f, 70.f, 94.f),
     pipe5(3380.f, 406.f, 70.f, 94.f)
+
 {
     window.setFramerateLimit(60);
     currentState = GameState::Menu;
@@ -132,6 +134,15 @@ Game::Game()
     }
     platformTex.setRepeated(true);
 
+    if (!blockTex.loadFromFile("mystery.png")) {
+        // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
+    }
+
+    if (!blockUsedTex.loadFromFile("mystery_after.png")) {
+        // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
+    }
+  
+
     if (!pipeTex.loadFromFile("toppipe.png")) {
         // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
     }
@@ -169,7 +180,8 @@ Game::Game()
     ground11.initTexture(groundTex);
     ground12.initTexture(groundTex);
 
-    platform.initTexture(platformTex);
+    platform.initTexture(platformTex); 
+    platform1.initTexture(platformTex);
     platform2.initTexture(platformTex);
     platform3.initTexture(platformTex);
     platform4.initTexture(platformTex);
@@ -203,6 +215,12 @@ Game::Game()
 
     if (!troopaTexture.loadFromFile("troopa.png")) {
         // Jeœli pliku nie ma, program nadal ruszy, ale wyœwietli w konsoli b³¹d od SFML
+    }
+
+    blocks.emplace_back(std::make_unique<MysteryBlock>(450.f, 350.f, 50.f, 50.f));
+
+    for (auto& block : blocks) {
+        block->initTextures(blockTex, blockUsedTex);
     }
 
 
@@ -299,7 +317,8 @@ void Game::processEvents()
                 }
 
                 if (currentState == GameState::Settings) {
-                    if (exit_button.isClicked(window)) currentState = previousState;
+                    if (exit_button2.isClicked(window)) currentState = previousState;
+
                 }
 
                 if (currentState == GameState::GameOver) {
@@ -380,6 +399,7 @@ void Game::update()
         ground12.resolveCollision(mario);
 
         platform.resolveCollision(mario);
+        platform1.resolveCollision(mario);
         platform2.resolveCollision(mario);
         platform3.resolveCollision(mario);
         platform4.resolveCollision(mario);
@@ -406,6 +426,11 @@ void Game::update()
         pipe4.resolveCollision(mario);
         pipe5.resolveCollision(mario);
 
+        for (auto& block : blocks) {
+            block->update(deltaTime);
+            block->resolveCollision(mario);
+        }
+
         //Jeœli mario poza ekranem to koniec gry
         if (mario.getY() > 600.f) {
             currentState = GameState::GameOver;
@@ -428,6 +453,7 @@ void Game::update()
             enemy->resolveCollision(ground12);
 
             enemy->resolveCollision(platform);
+            enemy->resolveCollision(platform1);
             enemy->resolveCollision(platform2);
             enemy->resolveCollision(platform3);
             enemy->resolveCollision(platform4);
@@ -455,18 +481,52 @@ void Game::update()
             enemy->resolveCollision(pipe5);
 
             if (mario.getBounds().findIntersection(enemy->getBounds()).has_value()) {
-                auto intersectionOpt = mario.getBounds().findIntersection(enemy->getBounds());
+                sf::FloatRect inter = mario.getBounds().findIntersection(enemy->getBounds()).value();
 
-                if (intersectionOpt.has_value() && !enemy->isSquashed()) {
-                    sf::FloatRect inter = intersectionOpt.value();
+                if (inter.size.x > inter.size.y && mario.getY() < enemy->getBounds().position.y) {
 
-                    if (inter.size.x > inter.size.y && mario.getY() < enemy->getBounds().position.y) {
+                    if (!enemy->isSquashed()) {
                         enemy->squash();
                         mario.bounceUp();
                         hud.addScore(100);
                     }
-                    else {
+                    else if (enemy->getType() == EnemyType::Troopa) {
+                        enemy->setDead();
+                        mario.bounceUp();
+                        hud.addScore(100); 
+                    }
+                }
+
+                else {
+                    if (enemy->getType() == EnemyType::Troopa && enemy->isSquashed() && !enemy->isShellMoving()) {
+                        enemy->kick(mario.getX());
+                    }
+                    else if (!enemy->isSquashed() || enemy->isShellMoving()) {
                         currentState = GameState::GameOver;
+                    }
+                }
+            }
+        }
+
+        for (size_t i = 0; i < enemies.size(); ++i) {
+            for (size_t j = i + 1; j < enemies.size(); ++j) {
+                if (enemies[i]->getBounds().findIntersection(enemies[j]->getBounds()).has_value()) {
+
+                    bool shell1 = (enemies[i]->getType() == EnemyType::Troopa && enemies[i]->isShellMoving());
+                    bool shell2 = (enemies[j]->getType() == EnemyType::Troopa && enemies[j]->isShellMoving());
+
+                    if (shell1 && !shell2) {
+                        enemies[j]->setDead(); 
+                        hud.addScore(100);
+                    }
+                    else if (shell2 && !shell1) {
+                        enemies[i]->setDead(); 
+                        hud.addScore(100);
+                    }
+                    else if (shell1 && shell2) {
+                        enemies[i]->setDead();
+                        enemies[j]->setDead();
+                        hud.addScore(200);
                     }
                 }
             }
@@ -505,6 +565,10 @@ void Game::render()
     else if (currentState == GameState::Settings)
     {
         window.clear(sf::Color::Black);
+        if (pauza.has_value()) {
+            window.draw(*pauza);
+        }
+        exit_button2.draw(window);
   
     }
     else if (currentState == GameState::Playing)
@@ -532,6 +596,7 @@ void Game::render()
         ground12.draw(window);
 
         platform.draw(window);
+        platform1.draw(window);
         platform2.draw(window);
         platform3.draw(window);
         platform4.draw(window);
@@ -557,6 +622,10 @@ void Game::render()
         pipe3.draw(window);
         pipe4.draw(window);
         pipe5.draw(window);
+
+        for (auto& block : blocks) {
+            block->draw(window);
+        }
 
         for (auto& it : items) {
             if (it && it->isActive()) it->draw(window);
@@ -619,6 +688,7 @@ void Game::resetGame() {
 
 
     platform.resetPlatform();
+    platform1.resetPlatform();
     platform2.resetPlatform();
     platform3.resetPlatform();
     platform4.resetPlatform();
@@ -644,6 +714,10 @@ void Game::resetGame() {
     pipe3.resetPlatform();
     pipe4.resetPlatform();
     pipe5.resetPlatform();
+
+    for (auto& block : blocks) {
+        block->resetBlock();
+    }
 
     Coin::resetCounters();
     hud.reset();

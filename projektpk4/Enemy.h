@@ -19,6 +19,9 @@ private:
 
     EnemyType type;
 
+    bool shellMoving = false;
+    bool completelyDead = false;
+
 public:
     Enemy(sf::Texture& texture, sf::Vector2f startPos, int frameWidth, int frameHeight, EnemyType type);
     void update(float deltaTime);
@@ -31,4 +34,9 @@ public:
     void squash();
     bool isSquashed() const;
     bool isReadyToRemove() const;
+
+    EnemyType getType() const;
+    bool isShellMoving() const;
+    void kick(float marioX);
+    void setDead();
 };
