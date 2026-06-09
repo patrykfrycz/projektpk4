@@ -21,6 +21,15 @@ private:
     std::vector<sf::IntRect> walkFrames;
     sf::IntRect jumpFrame;
 
+    bool starMode = false;
+    float starTimer = 0.f;
+
+    bool dead = false;
+
+    bool miniMode = false;
+
+    float invincibleTimer = 0.f;
+
 public:
    
     Player();
@@ -39,4 +48,16 @@ public:
     void setX(float x);
     void setY(float y);
     void bounceUp();
+
+    void activateStar();
+    bool hasStar() const;
+
+    void die();
+    bool isDead() const;
+
+    void activateMini();
+    void deactivateMini();
+    bool isMini() const;
+
+    bool isInvincible() const;
 };

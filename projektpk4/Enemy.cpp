@@ -2,7 +2,6 @@
 #include "Platform.h" 
 
 Enemy::Enemy(sf::Texture& texture, sf::Vector2f startPos, int frameWidth, int frameHeight, EnemyType type) : sprite(texture), type(type) {
-    
 
     sprite.setTextureRect(sf::IntRect({ 0, 0 }, { frameWidth, frameHeight }));
     sprite.setPosition(startPos);
@@ -15,6 +14,13 @@ Enemy::Enemy(sf::Texture& texture, sf::Vector2f startPos, int frameWidth, int fr
 }
 
 void Enemy::update(float deltaTime) {
+
+    if (knockedOut) {
+        vecspeed.y += gravity * deltaTime; 
+        sprite.move({ 0.f, vecspeed.y * deltaTime }); 
+        return;
+    }
+
     if (squashed && type == EnemyType::Goomba) {
         deathTimer += deltaTime; 
         return;
@@ -25,12 +31,14 @@ void Enemy::update(float deltaTime) {
         return;
     }
 
+   
     vecspeed.y += gravity * deltaTime;
     sprite.move(vecspeed * deltaTime);
 }
 
-// Zmieniamy znikanie - skorupa nigdy nie znika!
+
 bool Enemy::isReadyToRemove() const {
+    if (knockedOut && sprite.getPosition().y > 800.f) return true;
     if (completelyDead) return true;
     if (type == EnemyType::Troopa) return false;
     return (squashed && deathTimer >= 0.25f);
@@ -54,36 +62,30 @@ void Enemy::bounce() {
     }
 }
 
-void Enemy::resolveCollision(const Platform& platform) {
-    auto intersectionOpt = getBounds().findIntersection(platform.getBounds());
+void Enemy::resolveCollision(const sf::FloatRect& pBounds) {
+    if (knockedOut) return;
+
+    auto intersectionOpt = getBounds().findIntersection(pBounds);
 
     if (intersectionOpt.has_value()) {
         sf::FloatRect inter = intersectionOpt.value();
-        sf::FloatRect pBounds = platform.getBounds();
         sf::FloatRect eBounds = getBounds();
 
         if (inter.size.x < inter.size.y) {
-            if (vecspeed.x > 0) {
-                sprite.setPosition({ pBounds.position.x - eBounds.size.x - 0.1f, sprite.getPosition().y });
+            if (inter.size.x > 2.0f) {
+                if (vecspeed.x > 0) {
+                    sprite.setPosition({ pBounds.position.x - eBounds.size.x - 0.1f, sprite.getPosition().y });
+                }
+                else {
+                    sprite.setPosition({ pBounds.position.x + pBounds.size.x + 0.1f, sprite.getPosition().y });
+                }
+                bounce(); 
             }
-            else {
-                sprite.setPosition({ pBounds.position.x + pBounds.size.x + 0.1f, sprite.getPosition().y });
-            }
-            bounce();
         }
         else {
             if (vecspeed.y >= 0 && eBounds.position.y < pBounds.position.y) {
                 sprite.setPosition({ sprite.getPosition().x, pBounds.position.y - eBounds.size.y });
                 vecspeed.y = 0.f;
-
-                if (!shellMoving) {
-                    if (vecspeed.x < 0 && eBounds.position.x <= pBounds.position.x) {
-                        bounce();
-                    }
-                    else if (vecspeed.x > 0 && eBounds.position.x + eBounds.size.x >= pBounds.position.x + pBounds.size.x) {
-                        bounce();
-                    }
-                }
             }
         }
     }
@@ -94,7 +96,13 @@ void Enemy::draw(sf::RenderWindow& window) {
 }
 
 sf::FloatRect Enemy::getBounds() const {
-    return sprite.getGlobalBounds();
+    sf::FloatRect bounds = sprite.getGlobalBounds();
+
+    float shrinkX = bounds.size.x * 0.2f;
+    bounds.position.x += shrinkX / 2.f;
+    bounds.size.x -= shrinkX;
+
+    return bounds;
 }
 
 void Enemy::squash() {
@@ -132,10 +140,34 @@ void Enemy::kick(float marioX) {
 
     if (marioX < sprite.getPosition().x) {
         vecspeed = { 300.f, 0.f }; 
-        sprite.move({ 10.f, 0.f }); 
+        sprite.move({ 5.f, 0.f }); 
     }
     else {
         vecspeed = { -300.f, 0.f }; 
-        sprite.move({ -10.f, 0.f });
+        sprite.move({ -5.f, 0.f });
     }
+}
+
+void Enemy::knockOut() {
+    if (knockedOut) return;
+
+    knockedOut = true;
+    vecspeed.y = -100.f; 
+
+    sprite.setScale({ 2.5f, -2.5f });
+    sprite.move({ 0.f, sprite.getGlobalBounds().size.y });
+}
+
+bool Enemy::isKnockedOut() const {
+    return knockedOut;
+}
+
+void Enemy::preventFallingOff() {
+    if (wasOnGround && vecspeed.y > 0.f && !shellMoving && !knockedOut) {
+
+        bounce();
+        vecspeed.y = 0.f;
+    }
+
+    wasOnGround = (vecspeed.y == 0.f);
 }

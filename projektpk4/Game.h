@@ -9,6 +9,8 @@
 #include "HUD.h"
 #include "Enemy.h"
 #include "MysteryBlock.h"
+#include "Flag.h"
+#include "Mushroom.h"
 #include <algorithm>
 
 enum class GameState {
@@ -16,7 +18,8 @@ enum class GameState {
 	Playing,
 	GameOver,
 	Pause,
-	Settings
+	Settings,
+	Win
 };
 
 class Game {
@@ -24,6 +27,12 @@ private:
 	sf::RenderWindow window; 
 	GameState currentState; 
 	GameState previousState;
+
+	sf::Texture flagTex;
+	Flag endFlag;
+
+	sf::Texture winTex;
+	std::optional<sf::Sprite> gamewin;
 
 	Player mario;
 	sf::Texture marioTex;
@@ -54,52 +63,16 @@ private:
 	void update(); // Tutaj liczy siê matematyka i fizyka
 	void render(); // Tutaj wyœwietlamy kolory i rysunki na ekranie
 
-	void spawnItem(sf::Vector2f position);
-
-	Platform ground; 
-	Platform ground2;
-	Platform ground3;
-	Platform ground4;
-	Platform ground5;
-	Platform ground6;
-	Platform ground7;
-	Platform ground8;
-	Platform ground9;
-	Platform ground10;
-	Platform ground11;
-	Platform ground12;
-
-	Platform platform;
-	Platform platform1;
-	Platform platform2;
-	Platform platform3;
-	Platform platform4;
-	Platform platform5;
-	Platform platform6;
-	Platform platform7;
-	Platform platform8;
-	Platform platform9;
-	Platform platform10;
-	Platform platform11;
-	Platform platform12;
-	Platform platform13;
-	Platform platform14;
-	Platform platform15;
-	Platform platform16;
-	Platform platform17;
-	Platform platform18;
-	Platform platform19;
-	Platform platform20;
-
-	Platform pipe1;
-	Platform pipe2;
-	Platform pipe3;
-	Platform pipe4;
-	Platform pipe5;
+	std::vector<Platform> platforms; 
+	std::vector<Platform> grounds;
+	std::vector<Platform> pipes;
 
 	sf::Texture blockTex; 
 	sf::Texture blockUsedTex;   
 	std::vector<std::unique_ptr<MysteryBlock>> blocks;
+
+	sf::Texture starTex;
+	sf::Texture mushroomTex;
 
 	sf::Texture pipeTex;
 	sf::Texture platformTex;
@@ -135,7 +108,13 @@ public:
 
 	void resetGame();
 
+	void spawnGround(float x, float y, float w, float h);
+	void spawnPlatform(float x, float y, float w, float h);
+	void spawnPipe(float x, float y, float w, float h);
+
 	void spawnCoins();
+
+	void spawnMysteryBlock(float x, float y, ItemType content);
 
 	void spawnEnemies();
 };

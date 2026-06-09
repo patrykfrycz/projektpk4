@@ -3,10 +3,10 @@
 #include "Platform.h"
 #include "Coin.h"
 #include "HUD.h"
-
+#include "Star.h"
 
 Game::Game()
-    : window(sf::VideoMode({ 800, 600 }), "Super Mario Bros - OOP"),
+    : window(sf::VideoMode({ 800, 600 }), "Mario Project"),
    
 
     play_button(20.f, 190.f),
@@ -20,48 +20,8 @@ Game::Game()
     pause_button(20.f, 20.f),
     menu_button(310.f, 200.f),
     resume_button(300.f, 150.f),
-   
 
-    ground(0.f, 500.f, 1200.f, 100.f),
-    ground2(1350.f, 500.f, 900.f, 100.f),
-    ground3(2450.f, 500.f, 1000.f, 100.f),
-    ground4(3600.f, 500.f, 800.f, 100.f),
-    ground5(4650.f, 500.f, 1200.f, 100.f),
-    ground6(6000.f, 500.f, 900.f, 100.f),
-    ground7(7100.f, 500.f, 1100.f, 100.f),
-    ground8(8400.f, 500.f, 800.f, 100.f),
-    ground9(9450.f, 500.f, 1500.f, 100.f),
-    ground10(11200.f, 500.f, 900.f, 100.f),
-    ground11(12300.f, 500.f, 1200.f, 100.f),
-    ground12(13800.f, 500.f, 2000.f, 100.f),
-
-    platform(400.f, 350.f, 50.f, 50.f),
-    platform1(500.f, 350.f, 50.f, 50.f),
-    platform2(600.f, 200.f, 100.f, 50.f),
-    platform3(1220.f, 400.f, 100.f, 50.f),
-    platform4(1650.f, 300.f, 200.f, 50.f),
-    platform5(1850.f, 150.f, 100.f, 50.f),
-    platform6(2250.f, 400.f, 100.f, 50.f),
-    platform7(2350.f, 300.f, 100.f, 50.f),
-    platform8(2800.f, 350.f, 300.f, 50.f),
-    platform9(3200.f, 200.f, 150.f, 50.f),
-    platform10(3450.f, 300.f, 100.f, 50.f),
-    platform11(4450.f, 350.f, 150.f, 50.f),
-    platform12(5000.f, 350.f, 150.f, 50.f),
-    platform13(5400.f, 250.f, 200.f, 50.f),
-    platform14(6300.f, 300.f, 150.f, 50.f),
-    platform15(6600.f, 150.f, 150.f, 50.f),
-    platform16(6900.f, 300.f, 150.f, 50.f),
-    platform17(8250.f, 350.f, 100.f, 50.f),
-    platform18(9250.f, 400.f, 150.f, 50.f),
-    platform19(11000.f, 350.f, 150.f, 50.f),
-    platform20(12150.f, 300.f, 100.f, 50.f),
-
-    pipe1(1130.f, 406.f, 70.f, 94.f),
-    pipe2(1350.f, 406.f, 70.f, 94.f),
-    pipe3(2180.f, 406.f, 70.f, 94.f),
-    pipe4(2450.f, 406.f, 70.f, 94.f),
-    pipe5(3380.f, 406.f, 70.f, 94.f)
+    endFlag(15500.f, 100.f)
 
 {
     window.setFramerateLimit(60);
@@ -123,6 +83,17 @@ Game::Game()
 
     resume_button.initTexture(resumeTex);
 
+
+    if (!flagTex.loadFromFile("flag.png")) {
+        // b³¹d
+    }
+    endFlag.initTexture(flagTex);
+
+    if (!winTex.loadFromFile("wintex.png")) {
+        // b³¹d
+    }
+    gamewin.emplace(winTex);
+
     // --- TUTAJ JEST DODANY KOD WGRAWJ¥CY TEKSTURÊ PLATFORM ---
     if (!groundTex.loadFromFile("ground.png")) {
         // to w przysz³oœci mo¿emy tu wyrzuciæ b³¹d do konsoli
@@ -167,78 +138,83 @@ Game::Game()
     }
     gameover.emplace(overTex);
 
-    ground.initTexture(groundTex);
-    ground2.initTexture(groundTex);
-    ground3.initTexture(groundTex);
-    ground4.initTexture(groundTex);
-    ground5.initTexture(groundTex);
-    ground6.initTexture(groundTex);
-    ground7.initTexture(groundTex);
-    ground8.initTexture(groundTex);
-    ground9.initTexture(groundTex);
-    ground10.initTexture(groundTex);
-    ground11.initTexture(groundTex);
-    ground12.initTexture(groundTex);
+    if (!starTex.loadFromFile("star.png")) {
+        // b³¹d
+    }
 
-    platform.initTexture(platformTex); 
-    platform1.initTexture(platformTex);
-    platform2.initTexture(platformTex);
-    platform3.initTexture(platformTex);
-    platform4.initTexture(platformTex);
-    platform5.initTexture(platformTex);
-    platform6.initTexture(platformTex);
-    platform7.initTexture(platformTex);
-    platform8.initTexture(platformTex);
-    platform9.initTexture(platformTex);
-    platform10.initTexture(platformTex);
-    platform11.initTexture(platformTex);
-    platform12.initTexture(platformTex);
-    platform13.initTexture(platformTex);
-    platform14.initTexture(platformTex);
-    platform15.initTexture(platformTex);
-    platform16.initTexture(platformTex);
-    platform17.initTexture(platformTex);
-    platform18.initTexture(platformTex);
-    platform19.initTexture(platformTex);
-    platform20.initTexture(platformTex);
+    if (!mushroomTex.loadFromFile("mushroom.png")) {
+        // b³¹d
+    }
 
-    pipe1.initTexture(pipeTex);
-    pipe2.initTexture(pipeTex);
-    pipe3.initTexture(pipeTex);
-    pipe4.initTexture(pipeTex);
-    pipe5.initTexture(pipeTex);
-
+  
 
     if (!goombaTexture.loadFromFile("goombas.png")) {
         // Jeœli pliku nie ma, program nadal ruszy, ale wyœwietli w konsoli b³¹d od SFML
     }
 
     if (!troopaTexture.loadFromFile("troopa.png")) {
-        // Jeœli pliku nie ma, program nadal ruszy, ale wyœwietli w konsoli b³¹d od SFML
+        // blad
     }
 
-    blocks.emplace_back(std::make_unique<MysteryBlock>(450.f, 350.f, 50.f, 50.f));
+    spawnGround(0.f, 500.f, 2500.f, 100.f);
+    spawnGround(2800.f, 500.f, 3000.f, 100.f);
+    spawnGround(6200.f, 500.f, 2000.f, 100.f);
+    spawnGround(8600.f, 500.f, 1000.f, 100.f);
+    spawnGround(10200.f, 500.f, 5500.f, 100.f);
 
-    for (auto& block : blocks) {
-        block->initTextures(blockTex, blockUsedTex);
-    }
+    spawnPipe(1000.f, 406.f, 70.f, 94.f);
+    spawnPipe(1800.f, 406.f, 70.f, 94.f);
+    spawnPipe(3500.f, 406.f, 70.f, 94.f);
+    spawnPipe(3800.f, 406.f, 70.f, 94.f);
+    spawnPipe(7000.f, 406.f, 70.f, 94.f);
+    spawnPipe(11500.f, 406.f, 70.f, 94.f);
 
+    spawnPlatform(450.f, 370.f, 100.f, 50.f);
+    spawnMysteryBlock(550.f, 370.f, ItemType::Mushroom);
+    spawnPlatform(600.f, 370.f, 100.f, 50.f);
+    spawnPlatform(525.f, 240.f, 100.f, 50.f);
+
+    spawnPlatform(1900.f, 370.f, 250.f, 50.f);
+    spawnPlatform(1950.f, 240.f, 50.f, 50.f);
+    spawnMysteryBlock(2000.f, 240.f, ItemType::Star);
+    spawnPlatform(2050.f, 240.f, 50.f, 50.f);
+
+    spawnPlatform(2600.f, 370.f, 100.f, 50.f);
+
+    spawnPlatform(4100.f, 370.f, 150.f, 50.f);
+    spawnMysteryBlock(4250.f, 370.f, ItemType::Mushroom);
+    spawnPlatform(4300.f, 370.f, 150.f, 50.f);
+    spawnPlatform(4150.f, 240.f, 200.f, 50.f);
+    spawnPlatform(4200.f, 110.f, 50.f, 50.f);
+    spawnMysteryBlock(4250.f, 110.f, ItemType::Star);
+    spawnPlatform(4300.f, 110.f, 50.f, 50.f);
+
+    spawnPlatform(5950.f, 350.f, 100.f, 50.f);
+
+    spawnPlatform(7300.f, 370.f, 200.f, 50.f);
+    spawnPlatform(7350.f, 240.f, 50.f, 50.f);
+    spawnMysteryBlock(7400.f, 240.f, ItemType::Mushroom);
+    spawnPlatform(7450.f, 240.f, 50.f, 50.f);
+
+    spawnPlatform(10800.f, 370.f, 100.f, 50.f);
+    spawnMysteryBlock(10900.f, 370.f, ItemType::Star);
+    spawnPlatform(10950.f, 370.f, 100.f, 50.f);
+    spawnPlatform(10850.f, 240.f, 150.f, 50.f);
+
+    spawnPlatform(13450.f, 240.f, 50.f, 50.f);
+    spawnMysteryBlock(13500.f, 240.f, ItemType::Star);
+    spawnPlatform(13550.f, 240.f, 50.f, 50.f);
+
+    spawnPlatform(14700.f, 450.f, 50.f, 50.f);
+    spawnPlatform(14750.f, 400.f, 50.f, 100.f);
+    spawnPlatform(14800.f, 350.f, 50.f, 150.f);
+    spawnPlatform(14850.f, 300.f, 50.f, 200.f);
+    spawnPlatform(14900.f, 250.f, 50.f, 250.f);
+    spawnPlatform(14950.f, 200.f, 50.f, 300.f);
 
     spawnCoins();
 
     spawnEnemies();
-
-    /*Coin* coin1 = new Coin(400.f, 430.f);
-    coin1->coinCollect(hud, items, { 400.f, 430.f });
-
-    Coin* coin2 = new Coin(500.f, 430.f);
-    coin2->coinCollect(hud, items, { 500.f, 430.f });
-
-    Coin* coin3 = new Coin(800.f, 430.f);
-    coin3->coinCollect(hud, items, { 800.f, 430.f });
-
-    Coin* coin4 = new Coin(1150.f, 430.f);
-    coin4->coinCollect(hud, items, { 1150.f, 430.f });*/
 }
 
 void Game::run()
@@ -325,6 +301,11 @@ void Game::processEvents()
                     if (menu_button.isClicked(window)) currentState = GameState::Menu;
                     if (exit_button3.isClicked(window)) window.close();
                 }
+
+                if (currentState == GameState::Win) {
+                    if (menu_button.isClicked(window)) currentState = GameState::Menu;
+                    if (exit_button3.isClicked(window)) window.close();
+                }
             }
         }
 
@@ -341,6 +322,17 @@ void Game::update()
 
     //w ponizszych if-ach aktualizujemy pozycje np gracza lub innych obiektow ktore sie szybko zmieniaja
     if (currentState == GameState::Playing) {
+
+        if (mario.isDead()) {
+            mario.update(); 
+
+            
+            if (mario.getY() > 800.f) {
+                currentState = GameState::GameOver;
+            }
+            return; 
+        }
+
         mario.update();
 
         // Jeœli pozycja X gracza jest wiêksza ni¿ œrodek kamery, przesuñ kamerê
@@ -355,154 +347,93 @@ void Game::update()
             mario.setX(leftEdge); // Wypychamy Mario z powrotem na lew¹ krawêdŸ
         }
 
-        // Sprawdzamy kolizjê gracza z platform¹ 
-       /* std::optional<sf::FloatRect> intersection = mario.getBounds().findIntersection(ground.getBounds());
-        std::optional<sf::FloatRect> intersection2 = mario.getBounds().findIntersection(ground2.getBounds());
-        std::optional<sf::FloatRect> intersection3 = mario.getBounds().findIntersection(ground3.getBounds());
-        std::optional<sf::FloatRect> intersection4 = mario.getBounds().findIntersection(ground4.getBounds());
-
-        // Jeœli jest kolizja (has_value() zwraca true)
-        if (intersection.has_value()) {
-            // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
-            mario.stopFalling(ground.getBounds().position.y);
-        }
-
-        // Jeœli jest kolizja (has_value() zwraca true)
-        if (intersection2.has_value()) {
-            // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
-            mario.stopFalling(ground2.getBounds().position.y);
-        }
-
-        if (intersection3.has_value()) {
-            // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
-            mario.stopFalling(ground3.getBounds().position.y);
-        }
-
-        if (intersection4.has_value()) {
-            // Wypychamy gracza na wierzch platformy (pozycja Y platformy)
-            mario.stopFalling(ground4.getBounds().position.y);
-        }*/
-
-
         // poprawione platformy zeby nie przyci¹ga³y przy upadku
-        ground.resolveCollision(mario);
-        ground2.resolveCollision(mario);
-        ground3.resolveCollision(mario);
-        ground4.resolveCollision(mario);
-        ground5.resolveCollision(mario);
-        ground6.resolveCollision(mario);
-        ground7.resolveCollision(mario);
-        ground8.resolveCollision(mario);
-        ground9.resolveCollision(mario);
-        ground10.resolveCollision(mario);
-        ground11.resolveCollision(mario);
-        ground12.resolveCollision(mario);
-
-        platform.resolveCollision(mario);
-        platform1.resolveCollision(mario);
-        platform2.resolveCollision(mario);
-        platform3.resolveCollision(mario);
-        platform4.resolveCollision(mario);
-        platform5.resolveCollision(mario);
-        platform6.resolveCollision(mario);
-        platform7.resolveCollision(mario);
-        platform8.resolveCollision(mario);
-        platform9.resolveCollision(mario);
-        platform10.resolveCollision(mario);
-        platform11.resolveCollision(mario);
-        platform12.resolveCollision(mario);
-        platform13.resolveCollision(mario);
-        platform14.resolveCollision(mario);
-        platform15.resolveCollision(mario);
-        platform16.resolveCollision(mario);
-        platform17.resolveCollision(mario);
-        platform18.resolveCollision(mario);
-        platform19.resolveCollision(mario);
-        platform20.resolveCollision(mario);
-
-        pipe1.resolveCollision(mario);
-        pipe2.resolveCollision(mario);
-        pipe3.resolveCollision(mario);
-        pipe4.resolveCollision(mario);
-        pipe5.resolveCollision(mario);
+        for (auto& plat : platforms) {
+            plat.resolveCollision(mario);
+        }
+        for (auto& ground : grounds) {
+            ground.resolveCollision(mario);
+        }
+        for (auto& pipe : pipes) {
+            pipe.resolveCollision(mario);
+        }
 
         for (auto& block : blocks) {
             block->update(deltaTime);
             block->resolveCollision(mario);
         }
 
+        if (endFlag.checkCollision(mario)) {
+            currentState = GameState::Win;
+        }
+
         //Jeœli mario poza ekranem to koniec gry
-        if (mario.getY() > 600.f) {
-            currentState = GameState::GameOver;
+        if (mario.getY() > 600.f && !mario.isDead()) {
+            mario.die(); 
         }
 
         for (auto& enemy : enemies) {
             enemy->update(deltaTime);
 
-            enemy->resolveCollision(ground);
-            enemy->resolveCollision(ground2);
-            enemy->resolveCollision(ground3);
-            enemy->resolveCollision(ground4);
-            enemy->resolveCollision(ground5);
-            enemy->resolveCollision(ground6);
-            enemy->resolveCollision(ground7);
-            enemy->resolveCollision(ground8);
-            enemy->resolveCollision(ground9);
-            enemy->resolveCollision(ground10);
-            enemy->resolveCollision(ground11);
-            enemy->resolveCollision(ground12);
+            for (auto& ground : grounds) {
+                enemy->resolveCollision(ground.getBounds());
+            }
 
-            enemy->resolveCollision(platform);
-            enemy->resolveCollision(platform1);
-            enemy->resolveCollision(platform2);
-            enemy->resolveCollision(platform3);
-            enemy->resolveCollision(platform4);
-            enemy->resolveCollision(platform5);
-            enemy->resolveCollision(platform6);
-            enemy->resolveCollision(platform7);
-            enemy->resolveCollision(platform8);
-            enemy->resolveCollision(platform9);
-            enemy->resolveCollision(platform10);
-            enemy->resolveCollision(platform11);
-            enemy->resolveCollision(platform12);
-            enemy->resolveCollision(platform13);
-            enemy->resolveCollision(platform14);
-            enemy->resolveCollision(platform15);
-            enemy->resolveCollision(platform16);
-            enemy->resolveCollision(platform17);
-            enemy->resolveCollision(platform18);
-            enemy->resolveCollision(platform19);
-            enemy->resolveCollision(platform20);
+            for (auto& plat : platforms) {
+                enemy->resolveCollision(plat.getBounds());
+            }
 
-            enemy->resolveCollision(pipe1);
-            enemy->resolveCollision(pipe2);
-            enemy->resolveCollision(pipe3);
-            enemy->resolveCollision(pipe4);
-            enemy->resolveCollision(pipe5);
+            for (auto& pipe : pipes) {
+                enemy->resolveCollision(pipe.getBounds());
+            }
+
+            for (auto& block : blocks) {
+                enemy->resolveCollision(block->getBounds());
+            }
+
+            enemy->preventFallingOff();
 
             if (mario.getBounds().findIntersection(enemy->getBounds()).has_value()) {
                 sf::FloatRect inter = mario.getBounds().findIntersection(enemy->getBounds()).value();
 
-                if (inter.size.x > inter.size.y && mario.getY() < enemy->getBounds().position.y) {
+                if (mario.hasStar()) {
+                    if (!enemy->isReadyToRemove() && !enemy->isKnockedOut()) {
 
-                    if (!enemy->isSquashed()) {
-                        enemy->squash();
-                        mario.bounceUp();
-                        hud.addScore(100);
-                    }
-                    else if (enemy->getType() == EnemyType::Troopa) {
-                        enemy->setDead();
-                        mario.bounceUp();
-                        hud.addScore(100); 
+                        enemy->knockOut();
+
+                        hud.addScore(200);
                     }
                 }
-
                 else {
-                    if (enemy->getType() == EnemyType::Troopa && enemy->isSquashed() && !enemy->isShellMoving()) {
-                        enemy->kick(mario.getX());
+                    if (inter.size.x > inter.size.y && mario.getY() < enemy->getBounds().position.y) {
+                        if (!enemy->isSquashed()) {
+                            enemy->squash();
+                            mario.bounceUp();
+                            hud.addScore(100);
+                        }
+                        else if (enemy->getType() == EnemyType::Troopa) {
+                            enemy->setDead();
+                            mario.bounceUp();
+                            hud.addScore(100);
+                        }
                     }
-                    else if (!enemy->isSquashed() || enemy->isShellMoving()) {
-                        currentState = GameState::GameOver;
+                    // Dotkniêcie z boku
+                    else {
+                        if (enemy->getType() == EnemyType::Troopa && enemy->isSquashed() && !enemy->isShellMoving()) {
+                            enemy->kick(mario.getX());
+                        }
+                        else if (!enemy->isSquashed() || enemy->isShellMoving()) {
+                            if (!mario.isInvincible()) {
+                                if (mario.isMini()) {
+                                    mario.deactivateMini();
+                                    mario.bounceUp();
+                                }
+                                else {
+                                    mario.die();
+                                }
+                            }
+
+                        }
                     }
                 }
             }
@@ -538,6 +469,38 @@ void Game::update()
             if (mario.getBounds().findIntersection(it->getBounds()).has_value()) {
                 it->onPickup(mario);
             }
+
+
+            if (Star* star = dynamic_cast<Star*>(it.get())) {
+
+                    for (auto& plat : platforms) {
+                        star->resolveCollision(plat);
+                    }
+
+                    for (auto& ground : grounds) {
+                        star->resolveCollision(ground);
+                    }
+
+                    for (auto& pipe : pipes) {
+                        star->resolveCollision(pipe);
+                    }
+                
+            }
+
+            if(Mushroom* mush = dynamic_cast<Mushroom*>(it.get())) {
+                for (auto& plat : platforms) {
+                    mush->resolveCollision(plat);
+                }
+
+                for (auto& ground : grounds) {
+                    mush->resolveCollision(ground);
+                }
+
+                for (auto& pipe : pipes) {
+                    mush->resolveCollision(pipe);
+                }
+            }
+          
         }
 
         std::erase_if(enemies, [](const std::unique_ptr<Enemy>& e) {
@@ -582,46 +545,18 @@ void Game::render()
 
         window.setView(camera);
 
-        ground.draw(window);
-        ground2.draw(window);
-        ground3.draw(window);
-        ground4.draw(window);
-        ground5.draw(window);
-        ground6.draw(window);
-        ground7.draw(window);
-        ground8.draw(window);
-        ground9.draw(window);
-        ground10.draw(window);
-        ground11.draw(window);
-        ground12.draw(window);
+        for (auto& ground : grounds) {
+            ground.draw(window);
+        }
 
-        platform.draw(window);
-        platform1.draw(window);
-        platform2.draw(window);
-        platform3.draw(window);
-        platform4.draw(window);
-        platform5.draw(window);
-        platform6.draw(window);
-        platform7.draw(window);
-        platform8.draw(window);
-        platform9.draw(window);
-        platform10.draw(window);
-        platform11.draw(window);
-        platform12.draw(window);
-        platform13.draw(window);
-        platform14.draw(window);
-        platform15.draw(window);
-        platform16.draw(window);
-        platform17.draw(window);
-        platform18.draw(window);
-        platform19.draw(window);
-        platform20.draw(window);
+        for (auto& plat : platforms) {
+            plat.draw(window);
+        }
 
-        pipe1.draw(window);
-        pipe2.draw(window);
-        pipe3.draw(window);
-        pipe4.draw(window);
-        pipe5.draw(window);
+        for (auto& pipe : pipes) {
+            pipe.draw(window);
+        }
+        endFlag.draw(window);
 
         for (auto& block : blocks) {
             block->draw(window);
@@ -665,6 +600,14 @@ void Game::render()
         menu_button.draw(window);
         exit_button3.draw(window);
     }
+    else if (currentState == GameState::Win) {
+        window.clear(sf::Color::Black);
+        if (gamewin.has_value()) {
+            window.draw(*gamewin);
+        }
+        menu_button.draw(window);
+        exit_button3.draw(window);
+    }
 
     window.display();
 }
@@ -673,47 +616,18 @@ void Game::render()
 void Game::resetGame() {
     mario.reset();
     camera.setCenter({ 400.f, 300.f });
-    ground.resetPlatform();
-    ground2.resetPlatform();
-    ground3.resetPlatform();
-    ground4.resetPlatform();
-    ground5.resetPlatform();
-    ground6.resetPlatform();
-    ground7.resetPlatform();
-    ground8.resetPlatform();
-    ground9.resetPlatform();
-    ground10.resetPlatform();
-    ground11.resetPlatform();
-    ground12.resetPlatform();
+    for (auto& ground : grounds) {
+        ground.resetPlatform();
+    }
 
 
-    platform.resetPlatform();
-    platform1.resetPlatform();
-    platform2.resetPlatform();
-    platform3.resetPlatform();
-    platform4.resetPlatform();
-    platform5.resetPlatform();
-    platform6.resetPlatform();
-    platform7.resetPlatform();
-    platform8.resetPlatform();
-    platform9.resetPlatform();
-    platform10.resetPlatform();
-    platform11.resetPlatform();
-    platform12.resetPlatform();
-    platform13.resetPlatform();
-    platform14.resetPlatform();
-    platform15.resetPlatform();
-    platform16.resetPlatform();
-    platform17.resetPlatform();
-    platform18.resetPlatform();
-    platform19.resetPlatform();
-    platform20.resetPlatform();
+    for (auto& plat : platforms) {
+        plat.resetPlatform();
+    }
 
-    pipe1.resetPlatform();
-    pipe2.resetPlatform();
-    pipe3.resetPlatform();
-    pipe4.resetPlatform();
-    pipe5.resetPlatform();
+    for (auto& pipe : pipes) {
+        pipe.resetPlatform();
+    }
 
     for (auto& block : blocks) {
         block->resetBlock();
@@ -730,59 +644,95 @@ void Game::resetGame() {
     clock.restart();
 }
 
-void Game::spawnCoins() {
+void Game::spawnGround(float x, float y, float w, float h) {
+    platforms.emplace_back(x, y, w, h);
+    platforms.back().initTexture(groundTex);
+}
 
-    items.emplace_back(std::make_unique<Coin>(450.f, 300.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(620.f, 150.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(1250.f, 350.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(1680.f, 250.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(1880.f, 100.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(2850.f, 300.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(3250.f, 150.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(4500.f, 300.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(5050.f, 300.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(5450.f, 200.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(6650.f, 100.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(8300.f, 300.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
-    items.emplace_back(std::make_unique<Coin>(11050.f, 300.f));
-    items.back()->setOnPickup([this](Player& p) { hud.addScore(10); });
+void Game::spawnPlatform(float x, float y, float w, float h) {
+    platforms.emplace_back(x, y, w, h);
+    platforms.back().initTexture(platformTex);
+}
+
+void Game::spawnPipe(float x, float y, float w, float h) {
+    platforms.emplace_back(x, y, w, h);
+    platforms.back().initTexture(pipeTex);
+}
+
+
+void Game::spawnCoins() {
+    items.clear();
+
+    items.emplace_back(std::make_unique<Coin>(550.f, 180.f));
+    //items.emplace_back(std::make_unique<Coin>(585.f, 180.f));
+
+    items.emplace_back(std::make_unique<Coin>(2550.f, 280.f));
+    items.emplace_back(std::make_unique<Coin>(2650.f, 200.f));
+    items.emplace_back(std::make_unique<Coin>(2750.f, 280.f));
+
+    items.emplace_back(std::make_unique<Coin>(4200.f, 50.f));
+    items.emplace_back(std::make_unique<Coin>(4300.f, 50.f));
+
+    items.emplace_back(std::make_unique<Coin>(5000.f, 400.f));
+    items.emplace_back(std::make_unique<Coin>(6000.f, 180.f));
+
+    items.emplace_back(std::make_unique<Coin>(10900.f, 180.f));
+    items.emplace_back(std::make_unique<Coin>(12000.f, 350.f));
+
+    for (auto& item : items) {
+        if (item->getType() == ItemType::Coin) {
+            item->setOnPickup([this](Player& p) { hud.addScore(10); });
+        }
+    }
 
     hud.reset();
 }
 
 void Game::spawnEnemies() {
+    enemies.clear();
 
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(600.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(1100.f, 440.f), 18, 22, EnemyType::Goomba));
-
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(800.f, 440.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(600.f, 300.f), 18, 22, EnemyType::Goomba));
     enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(1500.f, 440.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(1900.f, 440.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(2000.f, 180.f), 16, 22, EnemyType::Troopa));
 
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(2700.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(3200.f, 440.f), 16, 22, EnemyType::Troopa));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(3600.f, 440.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(4250.f, 180.f), 18, 22, EnemyType::Goomba));
 
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(3900.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(4800.f, 440.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(4800.f, 440.f), 16, 22, EnemyType::Troopa));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(7350.f, 300.f), 18, 22, EnemyType::Goomba));
 
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(6200.f, 440.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(7400.f, 440.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(11000.f, 440.f), 16, 22, EnemyType::Troopa));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(12500.f, 440.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(14000.f, 440.f), 16, 22, EnemyType::Troopa));
 
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(8600.f, 440.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(9700.f, 440.f), 18, 22, EnemyType::Goomba));
+}
 
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(11500.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(12800.f, 440.f), 16, 22, EnemyType::Troopa));
+void Game::spawnMysteryBlock(float x, float y, ItemType content) {
+    auto block = std::make_unique<MysteryBlock>(x, y, 50.f, 50.f);
+    block->initTextures(blockTex, blockUsedTex); 
 
+    block->setOnHitCallback([this, content](sf::Vector2f pos) {
+
+        if (content == ItemType::Star) {
+            auto star = std::make_unique<Star>(pos.x, pos.y);
+            star->initTexture(starTex);
+            star->setOnPickup([this](Player& p) {
+                hud.addScore(1000);
+                p.activateStar();
+                });
+            items.push_back(std::move(star));
+        }
+        else if (content == ItemType::Mushroom) {
+            auto mush = std::make_unique<Mushroom>(pos.x, pos.y);
+            mush->initTexture(mushroomTex);
+            mush->setOnPickup([this](Player& p) {
+                hud.addScore(1000);
+                p.activateMini();
+                });
+            items.push_back(std::move(mush));
+        }
+        });
+
+    blocks.push_back(std::move(block));
 }

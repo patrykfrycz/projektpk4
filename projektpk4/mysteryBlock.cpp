@@ -35,6 +35,10 @@ void MysteryBlock::resetBlock() {
     }
 }
 
+void MysteryBlock::setOnHitCallback(std::function<void(sf::Vector2f)> callback) {
+    onHitCallback = callback;
+}
+
 void MysteryBlock::resolveCollision(Player& player) {
     auto interOpt = player.getBounds().findIntersection(getBounds());
     if (!interOpt.has_value()) return;
@@ -71,6 +75,12 @@ void MysteryBlock::resolveCollision(Player& player) {
                 if (emptyTexture && sprite.has_value()) {
                     sprite->setTexture(*emptyTexture);
                 }
+
+  
+                if (onHitCallback) {
+                    onHitCallback({ initialPosition.x, initialPosition.y - 32.f });
+                }
+
             }
         }
     }

@@ -27,56 +27,90 @@ void Player::initTexture(const sf::Texture& texture) {
 }
 
 void Player::update() {
-	bool isMoving = false;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
-		sprite->move({ -speed, 0.f });
-		sprite->setScale({ -2.f, 2.f });
-		isMoving = true;
-	}
 
-	// RUCH W PRAWO
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
-		sprite->move({ speed, 0.f });
-		sprite->setScale({ 2.f, 2.f });
-		isMoving = true;
-	}
+    if (invincibleTimer > 0.f) {
+        invincibleTimer -= 1.0f / 60.0f;
+    }
 
-	if (!canJump) {
+    if (starMode) {
+        starTimer -= 1.0f / 60.0f;
+        if (starTimer <= 0.f) {
+            starMode = false; 
+        }
+    }
 
-		sprite->setTextureRect(jumpFrame);
-	}
-	else if (isMoving) {
-		if (animClock.getElapsedTime().asSeconds() > 0.1f) {
-			animFrame++;
+    if (dead) {
+        speedY += gravity;
+        sprite->move({ 0.f, speedY });
+        return; 
+    }
 
-			if (animFrame >= walkFrames.size()) {
-				animFrame = 0;
-			}
+    bool isMoving = false;
+    float scaleMag = miniMode ? 1.5f : 2.f;
 
-			sprite->setTextureRect(walkFrames[animFrame]);
-			animClock.restart();
-		}
-	}
-	else {
-		animFrame = 0;
-		sprite->setTextureRect(standFrame);
-	}
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
+        sprite->move({ -speed, 0.f });
+        sprite->setScale({ -scaleMag, scaleMag });
+        isMoving = true;
+    }
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) && canJump) {
-		speedY = -jumpPower;
-		canJump = false;
-	}
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
+        sprite->move({ speed, 0.f });
+        sprite->setScale({ scaleMag, scaleMag });
+        isMoving = true;
+    }
 
-	speedY += gravity;
+    sf::IntRect currentFrame;
 
-	sprite->move({ 0.f, speedY });
+    if (!canJump) {
+        currentFrame = jumpFrame;
+    }
+    else if (isMoving) {
+        if (animClock.getElapsedTime().asSeconds() > 0.1f) {
+            animFrame++;
+            if (animFrame >= walkFrames.size()) {
+                animFrame = 0;
+            }
+            animClock.restart();
+        }
+        currentFrame = walkFrames[animFrame];
+    }
+    else {
+        animFrame = 0;
+        currentFrame = standFrame;
+    }
+
+    if (starMode) {
+        currentFrame.position.y += 235;
+    }
+
+    sprite->setTextureRect(currentFrame);
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) && canJump) {
+        speedY = -jumpPower;
+        canJump = false;
+    }
+
+    speedY += gravity;
+    sprite->move({ 0.f, speedY });
 }
 
-void Player::draw(sf::RenderWindow& window)
-{
-	if (sprite.has_value()) {
-		window.draw(*sprite);
-	}
+void Player::draw(sf::RenderWindow& window) {
+    if (sprite.has_value()) {
+        if (invincibleTimer > 0.f) {
+            if (static_cast<int>(invincibleTimer * 10) % 2 == 0) {
+                sprite->setColor(sf::Color(255, 255, 255, 100));
+            }
+            else {
+                sprite->setColor(sf::Color::White); 
+            }
+        }
+        else {
+            sprite->setColor(sf::Color::White); 
+        }
+
+        window.draw(*sprite);
+    }
 }
 
 sf::FloatRect Player::getBounds() const {
@@ -86,14 +120,18 @@ sf::FloatRect Player::getBounds() const {
 void Player::stopFalling(float platformTopY) {
 	sprite->setPosition({ sprite->getPosition().x, platformTopY - sprite->getGlobalBounds().size.y });
 
-	speedY = 0.f; // Zatrzymujemy pêd w dó³
-	canJump = true;  // Jesteœmy na ziemi, mo¿emy znowu skakaæ
+	speedY = 0.f; 
+	canJump = true;  
 }
 
 void Player::reset() {
 	sprite->setPosition({ 100.f, 300.f });
 	speedY = 0.f;
 	canJump = false;
+    dead = false;
+    miniMode = false;
+    speed = 5.f;
+    invincibleTimer = 0.f;
 }
 
 float Player::getX() const {
@@ -116,4 +154,44 @@ void Player::setY(float y) {
 void Player::bounceUp() {
 	speedY = -jumpPower * 0.7f;
 	canJump = false;
+}
+
+void Player::activateStar() {
+	starMode = true;
+	starTimer = 10.f; 
+}
+
+bool Player::hasStar() const {
+	return starMode;
+}
+
+void Player::die() {
+    dead = true;
+    speedY = -12.f; 
+    starMode = false;
+}
+
+bool Player::isDead() const {
+    return dead;
+}
+
+void Player::activateMini() {
+    miniMode = true;
+    speed = 10.f; 
+}
+
+void Player::deactivateMini() {
+    miniMode = false;
+    speed = 5.f; 
+
+    sprite->move({ 0.f, -32.f });
+    invincibleTimer = 2.0f;
+}
+
+bool Player::isInvincible() const {
+    return invincibleTimer > 0.f;
+}
+
+bool Player::isMini() const {
+    return miniMode;
 }

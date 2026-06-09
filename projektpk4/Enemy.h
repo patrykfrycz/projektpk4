@@ -22,6 +22,10 @@ private:
     bool shellMoving = false;
     bool completelyDead = false;
 
+    bool knockedOut = false;
+
+    bool wasOnGround = false;
+
 public:
     Enemy(sf::Texture& texture, sf::Vector2f startPos, int frameWidth, int frameHeight, EnemyType type);
     void update(float deltaTime);
@@ -29,7 +33,7 @@ public:
     void bounce();
     sf::FloatRect getBounds() const;
 
-    void resolveCollision(const Platform& platform);
+    void resolveCollision(const sf::FloatRect& pBounds);
 
     void squash();
     bool isSquashed() const;
@@ -39,4 +43,9 @@ public:
     bool isShellMoving() const;
     void kick(float marioX);
     void setDead();
+
+    void knockOut();
+    bool isKnockedOut() const;
+
+    void preventFallingOff();
 };

@@ -7,15 +7,16 @@ class Player;
 enum class ItemType { Coin, Mushroom, Flower, Star };
 
 class Item {
-public:
+protected:
     Item(ItemType type, float x, float y, float width = 32.f, float height = 32.f);
+
+public: 
     virtual ~Item() = default;
 
     virtual void update();
+    virtual void draw(sf::RenderWindow& window) const; 
 
-    virtual void draw(sf::RenderWindow& window) const;
-
-    sf::FloatRect getBounds() const;
+    virtual sf::FloatRect getBounds() const;
     bool isActive() const;
     ItemType getType() const;
 
@@ -25,7 +26,7 @@ public:
     void setPosition(float x, float y);
     void reset();
 
-protected:
+protected: 
     ItemType type;
     sf::RectangleShape shape;
     sf::Vector2f initialPosition;
