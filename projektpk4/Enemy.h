@@ -24,7 +24,8 @@ private:
 
     bool knockedOut = false;
 
-    bool wasOnGround = false;
+    bool onGround = false;
+    sf::FloatRect currentPlatformBounds;
 
 public:
     Enemy(sf::Texture& texture, sf::Vector2f startPos, int frameWidth, int frameHeight, EnemyType type);
@@ -46,6 +47,4 @@ public:
 
     void knockOut();
     bool isKnockedOut() const;
-
-    void preventFallingOff();
 };

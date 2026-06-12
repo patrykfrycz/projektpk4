@@ -1,5 +1,8 @@
 #include "Game.h"
 #include <optional>
+#include <filesystem>
+#include <iostream>
+#include <ranges>
 #include "Platform.h"
 #include "Coin.h"
 #include "HUD.h"
@@ -31,8 +34,40 @@ Game::Game()
     camera.setSize({ 800.f, 600.f });
     camera.setCenter({ 400.f, 300.f });
 
+    std::vector<std::string> requiredAssets = {
+        "mariotex.png",
+        "graj.png",
+        "ustawienia.png",
+        "tabela.png",
+        "wyjscie.png",
+        "pauza.png",
+        "menu.png",
+        "wznow.png",
+        "flag.png",
+        "wintex.png",
+        "ground.png",
+        "platform.png",
+        "mystery.png",
+        "mystery_after.png",
+        "toppipe.png",
+        "tlo.png",
+        "menutex.png",
+        "tlopauza.png",
+        "gameover.png",
+        "star.png",
+        "mushroom.png",
+        "goombas.png",
+        "troopa.png"
+    };
+
+    for (const auto& asset : requiredAssets) {
+        if (!std::filesystem::exists(asset)) {
+            std::cerr << "BLAD: Brak pliku graficznego na dysku: " << asset << "!\n";
+        }
+    }
+
+
     if (!marioTex.loadFromFile("mariotex.png")) {
-        // tutaj obs³uga b³êdu, jeœli plik nie istnieje
     }
 
     mario.initTexture(marioTex);
@@ -391,8 +426,6 @@ void Game::update()
                 enemy->resolveCollision(block->getBounds());
             }
 
-            enemy->preventFallingOff();
-
             if (mario.getBounds().findIntersection(enemy->getBounds()).has_value()) {
                 sf::FloatRect inter = mario.getBounds().findIntersection(enemy->getBounds()).value();
 
@@ -463,44 +496,40 @@ void Game::update()
             }
         }
 
-        for (auto& it : items) {
-            if (!it->isActive()) continue;
+        auto activeItems = items | std::views::filter([](const std::unique_ptr<Item>& it) {
+            return it && it->isActive();
+            });
+
+        for (auto& it : activeItems) {
             it->update();
+
             if (mario.getBounds().findIntersection(it->getBounds()).has_value()) {
                 it->onPickup(mario);
             }
 
-
             if (Star* star = dynamic_cast<Star*>(it.get())) {
-
-                    for (auto& plat : platforms) {
-                        star->resolveCollision(plat);
-                    }
-
-                    for (auto& ground : grounds) {
-                        star->resolveCollision(ground);
-                    }
-
-                    for (auto& pipe : pipes) {
-                        star->resolveCollision(pipe);
-                    }
-                
+                for (auto& plat : platforms) {
+                    star->resolveCollision(plat);
+                }
+                for (auto& ground : grounds) {
+                    star->resolveCollision(ground);
+                }
+                for (auto& pipe : pipes) {
+                    star->resolveCollision(pipe);
+                }
             }
 
-            if(Mushroom* mush = dynamic_cast<Mushroom*>(it.get())) {
+            if (Mushroom* mush = dynamic_cast<Mushroom*>(it.get())) {
                 for (auto& plat : platforms) {
                     mush->resolveCollision(plat);
                 }
-
                 for (auto& ground : grounds) {
                     mush->resolveCollision(ground);
                 }
-
                 for (auto& pipe : pipes) {
                     mush->resolveCollision(pipe);
                 }
             }
-          
         }
 
         std::erase_if(enemies, [](const std::unique_ptr<Enemy>& e) {
@@ -692,16 +721,13 @@ void Game::spawnEnemies() {
     enemies.clear();
 
     enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(800.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(600.f, 300.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(650.f, 440.f), 18, 22, EnemyType::Goomba));
     enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(1500.f, 440.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(2000.f, 180.f), 16, 22, EnemyType::Troopa));
-
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(2100.f, 440.f), 16, 22, EnemyType::Troopa));
     enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(3600.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(4250.f, 180.f), 18, 22, EnemyType::Goomba));
-
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(4250.f, 440.f), 18, 22, EnemyType::Goomba));
     enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(4800.f, 440.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(7350.f, 300.f), 18, 22, EnemyType::Goomba));
-
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(7500.f, 440.f), 18, 22, EnemyType::Goomba));
     enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(11000.f, 440.f), 16, 22, EnemyType::Troopa));
     enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(12500.f, 440.f), 18, 22, EnemyType::Goomba));
     enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(14000.f, 440.f), 16, 22, EnemyType::Troopa));
