@@ -14,15 +14,16 @@ Game::Game()
 
     play_button(20.f, 190.f),
     settings_button(20.f, 250.f),
-    settings_button2(225.f, 220.f),
+    settings_button2(175.f, 250.f),
     table_button(20.f, 310.f),
-    table_button2(300.f, 280.f),
-    exit_button(20.f, 360.f),
-    exit_button2(290.f, 330.f),
-    exit_button3(285.f, 260.f),
+    table_button2(250.f, 310.f),
+    exit_button(20.f, 365.f),
+    exit_button2(230.f, 365.f),
+    exit_button3(245.f, 265.f),
     pause_button(20.f, 20.f),
     menu_button(310.f, 200.f),
-    resume_button(300.f, 150.f),
+    resume_button(270.f, 180.f),
+    audio_button(200.f, 250.f),
 
     endFlag(15500.f, 100.f)
 
@@ -191,6 +192,42 @@ Game::Game()
         // blad
     }
 
+    if (clickBuffer.loadFromFile("klik.ogg")) {
+        clickSound.emplace(clickBuffer); 
+    }
+    if (deathBuffer.loadFromFile("smierc.ogg")) {
+        deathSound.emplace(deathBuffer); 
+    }
+
+    if (squashBuffer.loadFromFile("squash.wav")) {
+        squashSound.emplace(squashBuffer);
+    }
+
+    bgMusic.emplace(); 
+
+    if (bgMusic->openFromFile("music.wav")) {
+        bgMusic->setLooping(true);
+
+    }
+
+    if (hoverBuffer.loadFromFile("hover.wav")) {
+        hoverSound.emplace(hoverBuffer);
+    }
+
+    if (!audioOnTex.loadFromFile("on.png")) {}
+    if (!audioOffTex.loadFromFile("off.png")) {}
+
+    audio_button.initTexture(audioOnTex);
+
+    if (settingsFont.openFromFile("COOPBL.ttf")) {
+        audioText.emplace(settingsFont);
+        audioText->setString("Dzwiek: Wlaczono");
+        audioText->setCharacterSize(30);
+        audioText->setFillColor(sf::Color::White);
+        audioText->setPosition({ 200.f, 210.f }); 
+    }
+
+
     spawnGround(0.f, 500.f, 2500.f, 100.f);
     spawnGround(2800.f, 500.f, 3000.f, 100.f);
     spawnGround(6200.f, 500.f, 2000.f, 100.f);
@@ -247,6 +284,30 @@ Game::Game()
     spawnPlatform(14900.f, 250.f, 50.f, 250.f);
     spawnPlatform(14950.f, 200.f, 50.f, 300.f);
 
+
+    //podziemia
+    spawnGround(0.f, 3000.f, 5000.f, 100.f);
+
+    spawnPlatform(500.f, 2870.f, 150.f, 50.f);
+    spawnMysteryBlock(700.f, 2870.f, ItemType::Star);
+    spawnPlatform(750.f, 2870.f, 100.f, 50.f);
+
+    spawnPlatform(1300.f, 2870.f, 200.f, 50.f);
+    spawnPlatform(1375.f, 2740.f, 50.f, 50.f);
+    spawnMysteryBlock(1425.f, 2740.f, ItemType::Star);
+
+    spawnPlatform(2000.f, 2870.f, 50.f, 50.f);
+    spawnPlatform(2150.f, 2740.f, 50.f, 50.f);
+    spawnPlatform(2300.f, 2870.f, 50.f, 50.f);
+
+    spawnPlatform(3000.f, 2870.f, 300.f, 50.f);
+    spawnMysteryBlock(3125.f, 2740.f, ItemType::Mushroom);
+
+    spawnPlatform(3800.f, 2870.f, 200.f, 50.f);
+    spawnPlatform(4100.f, 2740.f, 150.f, 50.f);
+
+    spawnPipe(4800.f, 2906.f, 70.f, 94.f);
+
     spawnCoins();
 
     spawnEnemies();
@@ -281,11 +342,13 @@ void Game::processEvents()
             if (currentState == GameState::Playing && keyEvent->code == sf::Keyboard::Key::Escape)
             {
                 currentState = GameState::Pause;
+                if (bgMusic.has_value()) bgMusic->pause();
             }
             // Jeœli jesteœmy w EKRANIE PAUZY i wciœniemy SPACJE -> Wracamy do Gry
             else if (currentState == GameState::Pause && keyEvent->code == sf::Keyboard::Key::Space)
             {
                 currentState = GameState::Playing;
+                if (bgMusic.has_value()) bgMusic->play();
             }
 
             // Jeœli jesteœmy w EKRANIE PUAZY i wciœniemy Esc -> Wracamy do Menu
@@ -304,42 +367,121 @@ void Game::processEvents()
                     if (play_button.isClicked(window)) {
                         resetGame();
                         currentState = GameState::Playing;
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
                     }
-                    if (exit_button.isClicked(window)) window.close();
+                    if (exit_button.isClicked(window)) {
+                        window.close();
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
+                    }
+                    
                     if (settings_button.isClicked(window))
                     {
                         previousState = currentState;
                         currentState = GameState::Settings;
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
                     }
                 }
 
                 if (currentState == GameState::Pause) {
-                    if (resume_button.isClicked(window)) currentState = GameState::Playing;
-                    if (exit_button2.isClicked(window)) currentState = GameState::Menu;
+                    if (resume_button.isClicked(window)) {
+                        currentState = GameState::Playing;
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
+                        if (bgMusic.has_value()) bgMusic->play();
+                    } 
+                    if (exit_button2.isClicked(window)) {
+                        currentState = GameState::Menu;
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
+                    } 
                     if (settings_button2.isClicked(window))
                     {
                         previousState = currentState;
                         currentState = GameState::Settings;
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
                     }
                 }
 
                 if (currentState == GameState::Playing) {
-                    if (pause_button.isClicked(window)) currentState = GameState::Pause;
+                    if (pause_button.isClicked(window)) { 
+                        currentState = GameState::Pause; 
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
+                        if (bgMusic.has_value()) bgMusic->pause();
+                    }
                 }
 
                 if (currentState == GameState::Settings) {
-                    if (exit_button2.isClicked(window)) currentState = previousState;
+                    if (exit_button2.isClicked(window)) {
+                        currentState = previousState;
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
+                    }
 
+                    if (audio_button.isClicked(window)) {
+                        if (clickSound.has_value()) clickSound->play();
+
+                        isMuted = !isMuted;
+
+                        if (isMuted) {
+                            sf::Listener::setGlobalVolume(0.f);
+                            audio_button.initTexture(audioOffTex);
+
+                            if (audioText.has_value()) {
+                                audioText->setString("Dzwiek: Wylaczono");
+                            }
+                        }
+                        else {
+                            sf::Listener::setGlobalVolume(100.f);
+                            audio_button.initTexture(audioOnTex);
+
+                            if (audioText.has_value()) {
+                                audioText->setString("Dzwiek: Wlaczono");
+                            }
+                        }
+                    }
                 }
 
                 if (currentState == GameState::GameOver) {
-                    if (menu_button.isClicked(window)) currentState = GameState::Menu;
-                    if (exit_button3.isClicked(window)) window.close();
+                    if (menu_button.isClicked(window)) {
+                        currentState = GameState::Menu;
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
+                    }
+                    if (exit_button3.isClicked(window)) {
+                        window.close();
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
+                    }
                 }
 
                 if (currentState == GameState::Win) {
-                    if (menu_button.isClicked(window)) currentState = GameState::Menu;
-                    if (exit_button3.isClicked(window)) window.close();
+                    if (menu_button.isClicked(window)) {
+                        currentState = GameState::Menu;
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
+                    }
+                    if (exit_button3.isClicked(window)) {
+                        window.close();
+                        if (clickSound.has_value()) {
+                            clickSound->play();
+                        }
+                    }
                 }
             }
         }
@@ -353,6 +495,33 @@ void Game::update()
     //zegar gry
     sf::Time time = clock.restart();
     float deltaTime = time.asSeconds();
+
+    bool playHover = false; 
+
+    if (currentState == GameState::Menu) {
+        if (play_button.update(window)) playHover = true;
+        if (settings_button.update(window)) playHover = true;
+        if (table_button.update(window)) playHover = true;
+        if (exit_button.update(window)) playHover = true;
+    }
+    else if (currentState == GameState::Pause) {
+        if (resume_button.update(window)) playHover = true;
+        if (settings_button2.update(window)) playHover = true;
+        if (table_button2.update(window)) playHover = true;
+        if (exit_button2.update(window)) playHover = true;
+    }
+    else if (currentState == GameState::Settings) {
+        if (exit_button2.update(window)) playHover = true;
+        if (audio_button.update(window)) playHover = true;
+    }
+    else if (currentState == GameState::GameOver || currentState == GameState::Win) {
+        if (menu_button.update(window)) playHover = true;
+        if (exit_button3.update(window)) playHover = true;
+    }
+
+    if (playHover && hoverSound.has_value()) {
+        hoverSound->play();
+    }
 
 
     //w ponizszych if-ach aktualizujemy pozycje np gracza lub innych obiektow ktore sie szybko zmieniaja
@@ -370,17 +539,48 @@ void Game::update()
 
         mario.update();
 
-        // Jeœli pozycja X gracza jest wiêksza ni¿ œrodek kamery, przesuñ kamerê
+        float targetCamY = inSubWorld ? 2800.f : 300.f;
+
         if (mario.getX() > camera.getCenter().x) {
-            camera.setCenter({ mario.getX(), 300.f });
+            camera.setCenter({ mario.getX(), targetCamY });
+        }
+        else {
+            camera.setCenter({ camera.getCenter().x, targetCamY });
         }
 
-        // BLOKADA COFANIA (Lewa krawêdŸ ekranu)
         float leftEdge = camera.getCenter().x - 400.f;
-
         if (mario.getX() < leftEdge) {
-            mario.setX(leftEdge); // Wypychamy Mario z powrotem na lew¹ krawêdŸ
+            mario.setX(leftEdge);
         }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
+            for (auto& pipe : pipes) {
+                if (mario.getBounds().findIntersection(pipe.getBounds()).has_value()) {
+                    if (!inSubWorld && pipe.getBounds().position.y < 2000.f) {
+                        inSubWorld = true;
+                        returnPosition = { mario.getX(), mario.getY() }; 
+                        mario.setX(100.f);  
+                        mario.setY(2800.f); 
+                        camera.setCenter({ 400.f, 2800.f }); 
+                    }
+                }
+            }
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
+            for (auto& pipe : pipes) {
+                if (mario.getBounds().findIntersection(pipe.getBounds()).has_value()) {
+                    if (inSubWorld && pipe.getBounds().position.y > 2000.f) {
+                        inSubWorld = false;
+                        mario.setX(returnPosition.x + 80.f);
+                        mario.setY(returnPosition.y - 50.f);
+                        camera.setCenter({ mario.getX(), 300.f }); 
+                    }
+                }
+            }
+        }
+
+
 
         // poprawione platformy zeby nie przyci¹ga³y przy upadku
         for (auto& plat : platforms) {
@@ -402,9 +602,14 @@ void Game::update()
             currentState = GameState::Win;
         }
 
-        //Jeœli mario poza ekranem to koniec gry
-        if (mario.getY() > 600.f && !mario.isDead()) {
-            mario.die(); 
+        float deathLimitY = inSubWorld ? 3200.f : 600.f;
+
+        if (mario.getY() > deathLimitY && !mario.isDead()) {
+            mario.die();
+            if (deathSound.has_value()) {
+                deathSound->play();
+            }
+            if (bgMusic.has_value()) bgMusic->stop();
         }
 
         for (auto& enemy : enemies) {
@@ -435,6 +640,7 @@ void Game::update()
                         enemy->knockOut();
 
                         hud.addScore(200);
+                        if (squashSound.has_value()) squashSound->play();
                     }
                 }
                 else {
@@ -443,11 +649,13 @@ void Game::update()
                             enemy->squash();
                             mario.bounceUp();
                             hud.addScore(100);
+                            if (squashSound.has_value()) squashSound->play();
                         }
                         else if (enemy->getType() == EnemyType::Troopa) {
                             enemy->setDead();
                             mario.bounceUp();
                             hud.addScore(100);
+                            if (squashSound.has_value()) squashSound->play();
                         }
                     }
                     // Dotkniêcie z boku
@@ -463,6 +671,10 @@ void Game::update()
                                 }
                                 else {
                                     mario.die();
+                                    if (deathSound.has_value()) {
+                                        deathSound->play();
+                                    }
+                                    if (bgMusic.has_value()) bgMusic->stop();
                                 }
                             }
 
@@ -561,6 +773,12 @@ void Game::render()
             window.draw(*pauza);
         }
         exit_button2.draw(window);
+
+        audio_button.draw(window);
+
+        if (audioText.has_value()) {
+            window.draw(*audioText);
+        }
   
     }
     else if (currentState == GameState::Playing)
@@ -568,7 +786,7 @@ void Game::render()
         window.clear(sf::Color::Black);
 
         window.setView(window.getDefaultView());
-        if (background.has_value()) {
+        if (background.has_value() && !inSubWorld) {
             window.draw(*background);
         }
 
@@ -602,6 +820,15 @@ void Game::render()
         }
 
         mario.draw(window);
+
+        if (inSubWorld) {
+            sf::RectangleShape darkFilter(camera.getSize());
+            darkFilter.setPosition({ camera.getCenter().x - 400.f, camera.getCenter().y - 300.f });
+
+            darkFilter.setFillColor(sf::Color(0, 0, 40, 120));
+
+            window.draw(darkFilter);
+        }
 
         window.setView(window.getDefaultView());
         pause_button.draw(window);
@@ -671,11 +898,17 @@ void Game::resetGame() {
     spawnEnemies();
 
     clock.restart();
+
+    inSubWorld = false;
+
+    if (bgMusic.has_value()) {
+        bgMusic->play();
+    }
 }
 
 void Game::spawnGround(float x, float y, float w, float h) {
-    platforms.emplace_back(x, y, w, h);
-    platforms.back().initTexture(groundTex);
+    grounds.emplace_back(x, y, w, h);
+    grounds.back().initTexture(groundTex);
 }
 
 void Game::spawnPlatform(float x, float y, float w, float h) {
@@ -684,8 +917,8 @@ void Game::spawnPlatform(float x, float y, float w, float h) {
 }
 
 void Game::spawnPipe(float x, float y, float w, float h) {
-    platforms.emplace_back(x, y, w, h);
-    platforms.back().initTexture(pipeTex);
+    pipes.emplace_back(x, y, w, h);
+    pipes.back().initTexture(pipeTex);
 }
 
 
@@ -707,6 +940,24 @@ void Game::spawnCoins() {
 
     items.emplace_back(std::make_unique<Coin>(10900.f, 180.f));
     items.emplace_back(std::make_unique<Coin>(12000.f, 350.f));
+
+    //podziemia
+    items.emplace_back(std::make_unique<Coin>(550.f, 2800.f));
+    items.emplace_back(std::make_unique<Coin>(600.f, 2800.f));
+
+    items.emplace_back(std::make_unique<Coin>(1350.f, 2800.f));
+    items.emplace_back(std::make_unique<Coin>(1450.f, 2800.f));
+
+    items.emplace_back(std::make_unique<Coin>(2010.f, 2800.f));
+    items.emplace_back(std::make_unique<Coin>(2160.f, 2670.f));
+    items.emplace_back(std::make_unique<Coin>(2310.f, 2800.f));
+
+    items.emplace_back(std::make_unique<Coin>(3050.f, 2800.f));
+    items.emplace_back(std::make_unique<Coin>(3150.f, 2800.f));
+    items.emplace_back(std::make_unique<Coin>(3250.f, 2800.f));
+
+    items.emplace_back(std::make_unique<Coin>(3850.f, 2800.f));
+    items.emplace_back(std::make_unique<Coin>(4150.f, 2670.f));
 
     for (auto& item : items) {
         if (item->getType() == ItemType::Coin) {
@@ -731,6 +982,17 @@ void Game::spawnEnemies() {
     enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(11000.f, 440.f), 16, 22, EnemyType::Troopa));
     enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(12500.f, 440.f), 18, 22, EnemyType::Goomba));
     enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(14000.f, 440.f), 16, 22, EnemyType::Troopa));
+
+    //podziemia
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(900.f, 2940.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(1100.f, 2940.f), 16, 22, EnemyType::Troopa));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(1700.f, 2940.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(2500.f, 2940.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(2700.f, 2940.f), 16, 22, EnemyType::Troopa));
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(3400.f, 2940.f), 16, 22, EnemyType::Troopa));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(3600.f, 2940.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(4300.f, 2940.f), 18, 22, EnemyType::Goomba));
+    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(4600.f, 2940.f), 16, 22, EnemyType::Troopa));
 
 }
 

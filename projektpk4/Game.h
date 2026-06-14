@@ -12,6 +12,7 @@
 #include "Flag.h"
 #include "Mushroom.h"
 #include <algorithm>
+#include <SFML/Audio.hpp>
 
 enum class GameState {
 	Menu,
@@ -27,6 +28,20 @@ private:
 	sf::RenderWindow window; 
 	GameState currentState; 
 	GameState previousState;
+
+	sf::SoundBuffer clickBuffer;
+	std::optional<sf::Sound> clickSound; 
+
+	sf::SoundBuffer deathBuffer;
+	std::optional<sf::Sound> deathSound;
+
+	sf::SoundBuffer squashBuffer;
+	std::optional<sf::Sound> squashSound;
+
+	std::optional<sf::Music> bgMusic;
+
+	sf::SoundBuffer hoverBuffer;
+	std::optional<sf::Sound> hoverSound;
 
 	sf::Texture flagTex;
 	Flag endFlag;
@@ -55,6 +70,14 @@ private:
 	Button menu_button;
 	sf::Texture resumeTex;
 	Button resume_button;
+
+	bool isMuted = false;
+	sf::Texture audioOnTex;
+	sf::Texture audioOffTex;
+	Button audio_button;
+
+	sf::Font settingsFont;
+	std::optional<sf::Text> audioText;
 
 	std::vector<std::unique_ptr<Item>> items;
 	int score = 0;
@@ -86,6 +109,9 @@ private:
 
 	sf::Texture overTex;
 	std::optional<sf::Sprite> gameover;
+
+	bool inSubWorld = false;
+	sf::Vector2f returnPosition;
 
 	HUD hud;
 

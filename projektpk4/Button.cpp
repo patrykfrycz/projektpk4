@@ -27,3 +27,26 @@ bool Button::isClicked(const sf::RenderWindow& window) const {
     }
     return false;
 }
+
+bool Button::update(const sf::RenderWindow& window) {
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+
+    bool justHovered = false; 
+
+    if (sprite.has_value()) {
+        if (sprite->getGlobalBounds().contains(worldPos)) {
+            sprite->setScale({ 1.05f, 1.05f });
+
+            if (!wasHovered) {
+                justHovered = true;
+                wasHovered = true;  
+            }
+        }
+        else {
+            sprite->setScale({ 1.0f, 1.0f });
+            wasHovered = false; 
+        }
+    }
+    return justHovered;
+}

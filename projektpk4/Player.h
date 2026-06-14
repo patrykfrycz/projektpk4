@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <optional>
+#include <SFML/Audio.hpp>
 
 class Player
 {
@@ -29,6 +30,9 @@ private:
     bool miniMode = false;
 
     float invincibleTimer = 0.f;
+
+    sf::SoundBuffer jumpBuffer;
+    std::optional<sf::Sound> jumpSound;
 
 public:
    

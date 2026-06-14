@@ -24,6 +24,10 @@ void Player::initTexture(const sf::Texture& texture) {
 
 	sprite->setScale({ 2.f, 2.f });
 	sprite->setPosition({ 100.f, 100.f });
+
+    if (jumpBuffer.loadFromFile("skok.wav")) {
+        jumpSound.emplace(jumpBuffer);
+    }
 }
 
 void Player::update() {
@@ -89,6 +93,10 @@ void Player::update() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) && canJump) {
         speedY = -jumpPower;
         canJump = false;
+
+        if (jumpSound.has_value()) {
+            jumpSound->play();
+        }
     }
 
     speedY += gravity;

@@ -48,7 +48,8 @@ void Enemy::update(float deltaTime) {
 }
 
 bool Enemy::isReadyToRemove() const {
-    if (knockedOut && sprite.getPosition().y > 800.f) return true;
+    if (knockedOut && sprite.getPosition().y > 3500.f) return true;
+
     if (completelyDead) return true;
     if (type == EnemyType::Troopa) return false;
     return (squashed && deathTimer >= 0.25f);
