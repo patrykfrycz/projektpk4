@@ -13,6 +13,9 @@
 #include "Mushroom.h"
 #include <algorithm>
 #include <SFML/Audio.hpp>
+#include <fstream>
+#include <string>
+#include <regex>
 
 enum class GameState {
 	Menu,
@@ -20,6 +23,7 @@ enum class GameState {
 	GameOver,
 	Pause,
 	Settings,
+	Table,
 	Win
 };
 
@@ -64,6 +68,7 @@ private:
 	Button exit_button;
 	Button exit_button2;
 	Button exit_button3;
+	Button exit_button4;
 	sf::Texture pauseTex;
 	Button pause_button;
 	sf::Texture menubutTex;
@@ -78,6 +83,14 @@ private:
 
 	sf::Font settingsFont;
 	std::optional<sf::Text> audioText;
+
+	std::vector<int> highScores;
+	std::vector<sf::Text> highScoreTexts;
+	std::optional<sf::Text> tableTitleText;
+	std::optional<sf::Text> winScoreText;
+
+	void saveScore(int newScore);
+	void loadScores();
 
 	std::vector<std::unique_ptr<Item>> items;
 	int score = 0;

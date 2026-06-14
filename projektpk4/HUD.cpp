@@ -11,17 +11,23 @@ HUD::HUD()
 
 void HUD::init(const sf::Font& font) {
     // create texts with font (SFML3 requires font in ctor)
-    scoreText = std::make_unique<sf::Text>(font, "Score: 0", 20u);
+    scoreText = std::make_unique<sf::Text>(font, "Score\n0", 26u);
     scoreText->setFillColor(sf::Color::White);
     scoreText->setOutlineThickness(2.f);
     scoreText->setOutlineColor(sf::Color::Black);
-    scoreText->setPosition({ 300.f, 14.f });
+    scoreText->setPosition({ 280.f, 14.f });
 
-    coinText = std::make_unique<sf::Text>(font, "Coins: 0 (0)", 20u);
+    coinText = std::make_unique<sf::Text>(font, "Coins: 0 (0)", 26u);
     coinText->setFillColor(sf::Color::Yellow);
     coinText->setOutlineThickness(2.f);
     coinText->setOutlineColor(sf::Color::Black);
-    coinText->setPosition({ 400.f, 14.f });
+    coinText->setPosition({ 440.f, 14.f });
+
+    timeText = std::make_unique<sf::Text>(font, "Time: 400", 26u);
+    timeText->setFillColor(sf::Color::White);
+    timeText->setOutlineThickness(2.f);
+    timeText->setOutlineColor(sf::Color::Black);
+    timeText->setPosition({ 570.f, 14.f });
 
     const float iconRadius = 10.f;
     coinIcon.setRadius(iconRadius);
@@ -41,14 +47,23 @@ void HUD::update() {
     setCoins(Coin::getCollectedCount(), Coin::getCollectedPoints());
     updateScoreText();
     //updateCoinText();
+
+    if (timerClock.getElapsedTime().asSeconds() >= 1.0f) {
+        if (timeLeft > 0) {
+            timeLeft--;
+        }
+        timerClock.restart();
+    }
+    updateTimeText();
 }
 
 void HUD::draw(sf::RenderWindow& window) const {
-    window.draw(background);
+    //window.draw(background);
     //window.draw(coinIcon);
 
     if (scoreText) window.draw(*scoreText);
     if (coinText)  window.draw(*coinText);
+    if (timeText)  window.draw(*timeText);
 }
 
 void HUD::addScore(int amount) {
@@ -73,7 +88,8 @@ void HUD::setCoins(int coin, int points) {
 void HUD::updateScoreText() {
     if (!scoreText) return;
     if (score != lastScore) {
-        scoreText->setString("Score: " + std::to_string(score));
+        // Dodajemy \n, ¿eby liczba by³a pod spodem
+        scoreText->setString("SCORE\n" + std::to_string(score));
         lastScore = score;
     }
 }
@@ -81,8 +97,18 @@ void HUD::updateScoreText() {
 void HUD::updateCoinText() {
     if (!coinText) return;
     if (coins != lastCoins) {
-        coinText->setString("Coins: " + std::to_string(coins));
+        // Dodajemy \n, ¿eby liczba by³a pod spodem
+        coinText->setString("COINS\n" + std::to_string(coins));
         lastCoins = coins;
+    }
+}
+
+void HUD::updateTimeText() {
+    if (!timeText) return;
+    if (timeLeft != lastTime) {
+        // Dodajemy \n, ¿eby liczba by³a pod spodem
+        timeText->setString("TIME\n" + std::to_string(timeLeft));
+        lastTime = timeLeft;
     }
 }
 
@@ -90,11 +116,14 @@ void HUD::reset() {
     score = 0;
     coins = 0;
     //coinPoints = 0;
+    timeLeft = 400;
 
     lastScore = -1;
     lastCoins = -1;
     //lastCoinPoints = -1;
+    lastTime = -1;
 
     //updateScoreText();
 	//updateCoinText();
+    timerClock.restart();
 }

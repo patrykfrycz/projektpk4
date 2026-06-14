@@ -20,10 +20,11 @@ Game::Game()
     exit_button(20.f, 365.f),
     exit_button2(230.f, 365.f),
     exit_button3(245.f, 265.f),
+    exit_button4(245.f, 385.f),
     pause_button(20.f, 20.f),
     menu_button(310.f, 200.f),
     resume_button(270.f, 180.f),
-    audio_button(200.f, 250.f),
+    audio_button(200.f, 260.f),
 
     endFlag(15500.f, 100.f)
 
@@ -100,6 +101,7 @@ Game::Game()
     exit_button.initTexture(exitTex);
     exit_button2.initTexture(exitTex);
     exit_button3.initTexture(exitTex);
+    exit_button4.initTexture(exitTex);
 
     if (!pauseTex.loadFromFile("pauza.png")) {
         // tutaj obs³uga b³êdu, jeœli plik nie istnieje
@@ -219,12 +221,28 @@ Game::Game()
 
     audio_button.initTexture(audioOnTex);
 
-    if (settingsFont.openFromFile("COOPBL.ttf")) {
+    if (settingsFont.openFromFile("MARIO.ttf")) {
         audioText.emplace(settingsFont);
         audioText->setString("Dzwiek: Wlaczono");
-        audioText->setCharacterSize(30);
+        audioText->setCharacterSize(40);
         audioText->setFillColor(sf::Color::White);
         audioText->setPosition({ 200.f, 210.f }); 
+
+        tableTitleText.emplace(settingsFont);
+        tableTitleText->setString("TABELA WYNIKOW");
+        tableTitleText->setCharacterSize(50);
+        tableTitleText->setFillColor(sf::Color::Black);
+        tableTitleText->setPosition({ 170.f, 160.f });
+
+        winScoreText.emplace(settingsFont);
+        winScoreText->setCharacterSize(50); 
+        winScoreText->setFillColor(sf::Color::Yellow); 
+        winScoreText->setOutlineThickness(3.f);
+        winScoreText->setOutlineColor(sf::Color::Black);
+
+        winScoreText->setPosition({ 250.f, 400.f });
+
+        hud.init(settingsFont);
     }
 
 
@@ -386,6 +404,13 @@ void Game::processEvents()
                             clickSound->play();
                         }
                     }
+
+                    if (table_button.isClicked(window)) {
+                        if (clickSound.has_value()) clickSound->play();
+                        previousState = currentState;
+                        currentState = GameState::Table;
+                        loadScores(); 
+                    }
                 }
 
                 if (currentState == GameState::Pause) {
@@ -409,6 +434,20 @@ void Game::processEvents()
                         if (clickSound.has_value()) {
                             clickSound->play();
                         }
+                    }
+
+                    if (table_button.isClicked(window)) {
+                        if (clickSound.has_value()) clickSound->play();
+                        previousState = currentState;
+                        currentState = GameState::Table;
+                        loadScores(); 
+                    }
+                }
+
+                if (currentState == GameState::Table) {
+                    if (exit_button4.isClicked(window)) {
+                        currentState = previousState;
+                        if (clickSound.has_value()) clickSound->play();
                     }
                 }
 
@@ -518,6 +557,9 @@ void Game::update()
         if (menu_button.update(window)) playHover = true;
         if (exit_button3.update(window)) playHover = true;
     }
+    else if (currentState == GameState::Table) {
+        if (exit_button4.update(window)) playHover = true;
+    }
 
     if (playHover && hoverSound.has_value()) {
         hoverSound->play();
@@ -533,11 +575,14 @@ void Game::update()
             
             if (mario.getY() > 800.f) {
                 currentState = GameState::GameOver;
+                saveScore(hud.getScore());
             }
             return; 
         }
 
         mario.update();
+
+        hud.update();
 
         float targetCamY = inSubWorld ? 2800.f : 300.f;
 
@@ -556,7 +601,7 @@ void Game::update()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
             for (auto& pipe : pipes) {
                 if (mario.getBounds().findIntersection(pipe.getBounds()).has_value()) {
-                    if (!inSubWorld && pipe.getBounds().position.y < 2000.f) {
+                    if (!inSubWorld && pipe.getBounds().position.y < 2000.f && pipe.getBounds().position.x == 3500.f) {
                         inSubWorld = true;
                         returnPosition = { mario.getX(), mario.getY() }; 
                         mario.setX(100.f);  
@@ -600,6 +645,11 @@ void Game::update()
 
         if (endFlag.checkCollision(mario)) {
             currentState = GameState::Win;
+            saveScore(hud.getScore());
+
+            if (winScoreText.has_value()) {
+                winScoreText->setString("WYNIK: " + std::to_string(hud.getScore()));
+            }
         }
 
         float deathLimitY = inSubWorld ? 3200.f : 600.f;
@@ -786,6 +836,8 @@ void Game::render()
         window.clear(sf::Color::Black);
 
         window.setView(window.getDefaultView());
+        
+
         if (background.has_value() && !inSubWorld) {
             window.draw(*background);
         }
@@ -833,9 +885,10 @@ void Game::render()
         window.setView(window.getDefaultView());
         pause_button.draw(window);
 
-
-        hud.update();
         hud.draw(window);
+
+
+        
     }
     else if (currentState == GameState::Pause)
     {
@@ -863,7 +916,29 @@ void Game::render()
         }
         menu_button.draw(window);
         exit_button3.draw(window);
+
+        if (winScoreText.has_value()) {
+            window.draw(*winScoreText);
+        }
     }
+
+    else if (currentState == GameState::Table)
+    {
+        window.clear(sf::Color::Black);
+        if (pauza.has_value()) {
+            window.draw(*pauza);
+        }
+
+        if (tableTitleText.has_value()) {
+            window.draw(*tableTitleText);
+        }
+
+        for (const auto& text : highScoreTexts) {
+            window.draw(text);
+        }
+
+        exit_button4.draw(window);
+        }
 
     window.display();
 }
@@ -1023,4 +1098,50 @@ void Game::spawnMysteryBlock(float x, float y, ItemType content) {
         });
 
     blocks.push_back(std::move(block));
+}
+
+
+void Game::saveScore(int newScore) {
+    if (newScore <= 0) return;
+
+    loadScores();
+    highScores.push_back(newScore);
+
+    std::sort(highScores.begin(), highScores.end(), std::greater<int>());
+    if (highScores.size() > 5) highScores.resize(5);
+
+    std::ofstream file("wyniki.txt");
+    for (int s : highScores) {
+        file << "Wynik gracza Mario to: " << s << " pkt.\n";
+    }
+}
+
+void Game::loadScores() {
+    highScores.clear();
+    highScoreTexts.clear();
+
+    std::ifstream file("wyniki.txt");
+    std::string line;
+
+    std::regex pattern(R"((\d+))");
+    std::smatch match; 
+
+    while (std::getline(file, line)) {
+        if (std::regex_search(line, match, pattern)) {
+            int s = std::stoi(match.str(1));
+            highScores.push_back(s);
+        }
+    }
+
+    std::sort(highScores.begin(), highScores.end(), std::greater<int>());
+    if (highScores.size() > 5) highScores.resize(5);
+
+    float startY = 210.f;
+    for (size_t i = 0; i < highScores.size(); ++i) {
+        highScoreTexts.emplace_back(settingsFont);
+        highScoreTexts.back().setString(std::to_string(i + 1) + ".    " + std::to_string(highScores[i]) + " PKT");
+        highScoreTexts.back().setCharacterSize(40);
+        highScoreTexts.back().setFillColor(sf::Color::Yellow);
+        highScoreTexts.back().setPosition({ 280.f, startY + (i * 30.f) });
+    }
 }

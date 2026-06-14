@@ -49,7 +49,7 @@ void Coin::coinCollect(HUD& hud, std::vector<std::unique_ptr<Item>>& items, sf::
 
     items.emplace_back(std::make_unique<Coin>(position.x, position.y));
     items.back()->setOnPickup([&hud](Player& p) {
-        hud.addScore(10);
+        hud.addScore(150);
         });
 }
 

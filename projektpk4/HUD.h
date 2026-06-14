@@ -21,9 +21,11 @@ public:
 private:
     void updateScoreText();
     void updateCoinText();
+    void updateTimeText();
 
     std::unique_ptr<sf::Text> scoreText;
     std::unique_ptr<sf::Text> coinText;
+    std::unique_ptr<sf::Text> timeText;
     sf::RectangleShape background;
     sf::CircleShape coinIcon;
 
@@ -31,8 +33,12 @@ private:
     int score = 0;
     int coins = 0;
     int coinPoints = 0;
+    int timeLeft = 400;
 
     int lastScore = -1;
     int lastCoins = -1;
     int lastCoinPoints = -1;
+    int lastTime = -1;
+
+    sf::Clock timerClock;
 };
