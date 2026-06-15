@@ -16,6 +16,9 @@
 #include <fstream>
 #include <string>
 #include <regex>
+#include <future>
+#include <unordered_map>
+#include <chrono>
 
 
 enum class GameState {
@@ -33,6 +36,8 @@ private:
 	sf::RenderWindow window; 
 	GameState currentState; 
 	GameState previousState;
+
+	std::unordered_map<std::string, std::future<sf::Image>> asyncImages;
 
 	sf::SoundBuffer clickBuffer;
 	std::optional<sf::Sound> clickSound; 

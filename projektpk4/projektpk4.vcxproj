@@ -177,6 +177,7 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Coin.h" />
+    <ClInclude Include="concepts.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="HUD.h" />

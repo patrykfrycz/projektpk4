@@ -1,12 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <optional>
+#include <string>
 
 class Button {
 private:
     std::optional<sf::Sprite> sprite;
     sf::Vector2f position; 
     bool wasHovered = false;
+
 public:
     Button(float x, float y);
 

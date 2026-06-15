@@ -3,10 +3,18 @@
 #include <filesystem>
 #include <iostream>
 #include <ranges>
+
+#include <future>
+#include <chrono>
+
+//import game_core;
+
+
 #include "Platform.h"
 #include "Coin.h"
 #include "HUD.h"
 #include "Star.h"
+#include "concepts.h"
 #include "SuperMushroom.h"
 
 Game::Game()
@@ -184,9 +192,33 @@ Game::Game()
     }
 
     if (!superMushroomTex.loadFromFile("supermushroom.png")) {
-        // b³¹d
-    }
 
+        auto find_asset = [](const std::string& name) -> std::optional<std::filesystem::path> {
+            try {
+                for (const auto& entry : std::filesystem::recursive_directory_iterator(std::filesystem::current_path())) {
+                    if (!entry.is_directory() && entry.path().filename() == name) {
+                        return entry.path();
+                    }
+                }
+            }
+            catch (const std::filesystem::filesystem_error& e) {
+                std::cerr << "Filesystem error while searching for " << name << ": " << e.what() << '\n';
+            }
+            return std::nullopt;
+            };
+
+        if (auto p = find_asset("supermushroom.png"); p.has_value()) {
+            if (!superMushroomTex.loadFromFile(p->string())) {
+                std::cerr << "Found supermushroom.png at " << p->string() << " but failed to load texture.\n";
+            }
+            else {
+                std::cerr << "Loaded supermushroom.png from: " << p->string() << '\n';
+            }
+        }
+        else {
+            std::cerr << "ERROR: supermushroom.png not found in working directory or subfolders.\n";
+        }
+    }
   
 
     if (!goombaTexture.loadFromFile("goombas.png")) {
@@ -221,6 +253,18 @@ Game::Game()
 
     if (!audioOnTex.loadFromFile("on.png")) {}
     if (!audioOffTex.loadFromFile("off.png")) {}
+
+    asyncImages["mushroom"] = std::async(std::launch::async, []() -> sf::Image {
+        sf::Image img;
+        img.loadFromFile("mushroom.png");
+        return img;
+        });
+    asyncImages["supermushroom"] = std::async(std::launch::async, []() -> sf::Image {
+        sf::Image img;
+        img.loadFromFile("supermushroom.png");
+        return img;
+        });
+
 
     audio_button.initTexture(audioOnTex);
 
@@ -566,6 +610,29 @@ void Game::update()
 
     if (playHover && hoverSound.has_value()) {
         hoverSound->play();
+    }
+
+    std::vector<std::string> ready;
+    for (auto& p : asyncImages) {
+        if (p.second.valid() && p.second.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready) {
+            ready.push_back(p.first);
+        }
+    }
+
+    for (const auto& key : ready) {
+        sf::Image img = asyncImages[key].get();
+        if (img.getSize().x == 0 || img.getSize().y == 0) {
+            std::cerr << "Async load failed for: " << key << '\n';
+        }
+        else {
+            if (key == "mushroom") {
+                if (!mushroomTex.loadFromImage(img)) std::cerr << "Failed to create mushroomTex\n";
+            }
+            else if (key == "supermushroom") {
+                if (!superMushroomTex.loadFromImage(img)) std::cerr << "Failed to create superMushroomTex\n";
+            }
+        }
+        asyncImages.erase(key);
     }
 
 
@@ -1057,33 +1124,75 @@ void Game::spawnCoins() {
 
     hud.reset();
 }
-
+/*
 void Game::spawnEnemies() {
     enemies.clear();
 
     // G³ówna mapa
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(800.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(650.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(1500.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(2100.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(3600.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(4250.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(4800.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(7500.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(11000.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(12500.f, 440.f)));
-    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(14000.f, 440.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(800.f, 440.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(650.f, 440.f)));
+    enemies.emplace_back(make_enemy<Troopa>(troopaTexture, sf::Vector2f(1500.f, 440.f)));
+    enemies.emplace_back(make_enemy<Troopa>(troopaTexture, sf::Vector2f(2100.f, 440.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(3600.f, 440.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(4250.f, 440.f)));
+    enemies.emplace_back(make_enemy<Troopa>(troopaTexture, sf::Vector2f(4800.f, 440.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(7500.f, 440.f)));
+    enemies.emplace_back(make_enemy<Troopa>(troopaTexture, sf::Vector2f(11000.f, 440.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(12500.f, 440.f)));
+    enemies.emplace_back(make_enemy<Troopa>(troopaTexture, sf::Vector2f(14000.f, 440.f)));
 
     // Podziemia
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(900.f, 2940.f)));
-    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(1100.f, 2940.f)));
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(1700.f, 2940.f)));
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(2500.f, 2940.f)));
-    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(2700.f, 2940.f)));
-    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(3400.f, 2940.f)));
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(3600.f, 2940.f)));
-    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(4300.f, 2940.f)));
-    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(4600.f, 2940.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(900.f, 2940.f)));
+    enemies.emplace_back(make_enemy<Troopa>(troopaTexture, sf::Vector2f(1100.f, 2940.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(1700.f, 2940.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(2500.f, 2940.f)));
+    enemies.emplace_back(make_enemy<Troopa>(troopaTexture, sf::Vector2f(2700.f, 2940.f)));
+    enemies.emplace_back(make_enemy<Troopa>(troopaTexture, sf::Vector2f(3400.f, 2940.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(3600.f, 2940.f)));
+    enemies.emplace_back(make_enemy<Goomba>(goombaTexture, sf::Vector2f(4300.f, 2940.f)));
+    enemies.emplace_back(make_enemy<Troopa>(troopaTexture, sf::Vector2f(4600.f, 2940.f)));
+}
+*/
+void Game::spawnEnemies() {
+    enemies.clear();
+
+    const std::vector<std::pair<bool, sf::Vector2f>> defs = {
+        // G³ówna mapa
+        {false, {800.f, 440.f}},
+        {false, {650.f, 440.f}},
+        {true,  {1500.f, 440.f}},
+        {true,  {2100.f, 440.f}},
+        {false, {3600.f, 440.f}},
+        {false, {4250.f, 440.f}},
+        {true,  {4800.f, 440.f}},
+        {false, {7500.f, 440.f}},
+        {true,  {11000.f, 440.f}},
+        {false, {12500.f, 440.f}},
+        {true,  {14000.f, 440.f}},
+
+        // Podziemia
+        {false, {900.f, 2940.f}},
+        {true,  {1100.f, 2940.f}},
+        {false, {1700.f, 2940.f}},
+        {false, {2500.f, 2940.f}},
+        {true,  {2700.f, 2940.f}},
+        {true,  {3400.f, 2940.f}},
+        {false, {3600.f, 2940.f}},
+        {false, {4300.f, 2940.f}},
+        {true,  {4600.f, 2940.f}}
+    };
+
+    enemies.reserve(defs.size());
+    std::ranges::for_each(defs, [this](const auto& pair) {
+        bool isTroopa = pair.first;
+        const sf::Vector2f& pos = pair.second;
+        if (isTroopa) {
+            enemies.emplace_back(make_enemy<Troopa>(troopaTexture, pos));
+        }
+        else {
+            enemies.emplace_back(make_enemy<Goomba>(goombaTexture, pos));
+        }
+        });
 }
 
 void Game::spawnMysteryBlock(float x, float y, ItemType content) {
@@ -1093,7 +1202,7 @@ void Game::spawnMysteryBlock(float x, float y, ItemType content) {
     block->setOnHitCallback([this, content](sf::Vector2f pos) {
 
         if (content == ItemType::Star) {
-            auto star = std::make_unique<Star>(pos.x, pos.y);
+            auto star = make_item<Star>(pos.x, pos.y);
             star->initTexture(starTex);
             star->setOnPickup([this](Player& p) {
                 hud.addScore(1000);
@@ -1102,7 +1211,7 @@ void Game::spawnMysteryBlock(float x, float y, ItemType content) {
             items.push_back(std::move(star));
         }
         else if (content == ItemType::Mushroom) {
-            auto mush = std::make_unique<Mushroom>(pos.x, pos.y);
+            auto mush = make_item<Mushroom>(pos.x, pos.y);
             mush->initTexture(mushroomTex);
             mush->setOnPickup([this](Player& p) {
                 hud.addScore(1000);
@@ -1111,7 +1220,7 @@ void Game::spawnMysteryBlock(float x, float y, ItemType content) {
             items.push_back(std::move(mush));
         }
         else if (content == ItemType::SuperMushroom) {
-            auto superMush = std::make_unique<SuperMushroom>(pos.x, pos.y);
+            auto superMush = make_item<SuperMushroom>(pos.x, pos.y);
             superMush->initTexture(superMushroomTex);
             superMush->setOnPickup([this](Player& p) {
                 hud.addScore(1000);
