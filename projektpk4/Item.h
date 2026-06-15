@@ -4,7 +4,7 @@
 
 class Player;
 
-enum class ItemType { Coin, Mushroom, Flower, Star };
+enum class ItemType { Coin, Mushroom, Flower, Star, SuperMushroom };
 
 class Item {
 protected:

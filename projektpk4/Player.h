@@ -34,6 +34,8 @@ private:
     sf::SoundBuffer jumpBuffer;
     std::optional<sf::Sound> jumpSound;
 
+	bool bigMode = false;
+
 public:
    
     Player();
@@ -64,4 +66,8 @@ public:
     bool isMini() const;
 
     bool isInvincible() const;
+
+    void activateGrow();
+    void deactivateGrow();
+    bool isBig() const;
 };

@@ -203,3 +203,41 @@ bool Player::isInvincible() const {
 bool Player::isMini() const {
     return miniMode;
 }
+
+void Player::activateGrow() {
+    if (!sprite.has_value()) return;
+    if (isBig()) return;
+
+    sf::FloatRect before = getBounds();
+    float bottomY = before.position.y + before.size.y;
+
+    sf::Vector2f s = sprite->getScale();
+    sprite->setScale({ s.x * 2.f, s.y * 2.f });
+
+    sf::FloatRect after = getBounds();
+    float newY = bottomY - after.size.y;
+    sprite->setPosition({ sprite->getPosition().x, newY });
+
+    bigMode = true;
+}
+
+void Player::deactivateGrow() {
+    if (!sprite.has_value()) return;
+    if (!isBig()) return;
+
+    sf::FloatRect before = getBounds();
+    float bottomY = before.position.y + before.size.y;
+
+    sf::Vector2f s = sprite->getScale();
+    sprite->setScale({ s.x * 0.5f, s.y * 0.5f });
+
+    sf::FloatRect after = getBounds();
+    float newY = bottomY - after.size.y;
+    sprite->setPosition({ sprite->getPosition().x, newY });
+
+    bigMode = false;
+}
+
+bool Player::isBig() const {
+    return bigMode;
+}

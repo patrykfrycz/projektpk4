@@ -17,6 +17,7 @@
 #include <string>
 #include <regex>
 
+
 enum class GameState {
 	Menu,
 	Playing,
@@ -109,6 +110,7 @@ private:
 
 	sf::Texture starTex;
 	sf::Texture mushroomTex;
+	sf::Texture superMushroomTex;
 
 	sf::Texture pipeTex;
 	sf::Texture platformTex;

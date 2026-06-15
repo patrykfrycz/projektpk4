@@ -7,11 +7,10 @@
 #include "Coin.h"
 #include "HUD.h"
 #include "Star.h"
+#include "SuperMushroom.h"
 
 Game::Game()
     : window(sf::VideoMode({ 800, 600 }), "Mario Project"),
-   
-
     play_button(20.f, 190.f),
     settings_button(20.f, 250.f),
     settings_button2(175.f, 250.f),
@@ -58,6 +57,7 @@ Game::Game()
         "gameover.png",
         "star.png",
         "mushroom.png",
+        "supermushroom.png",
         "goombas.png",
         "troopa.png"
     };
@@ -67,7 +67,6 @@ Game::Game()
             std::cerr << "BLAD: Brak pliku graficznego na dysku: " << asset << "!\n";
         }
     }
-
 
     if (!marioTex.loadFromFile("mariotex.png")) {
     }
@@ -184,6 +183,10 @@ Game::Game()
         // b³¹d
     }
 
+    if (!superMushroomTex.loadFromFile("supermushroom.png")) {
+        // b³¹d
+    }
+
   
 
     if (!goombaTexture.loadFromFile("goombas.png")) {
@@ -260,7 +263,7 @@ Game::Game()
     spawnPipe(11500.f, 406.f, 70.f, 94.f);
 
     spawnPlatform(450.f, 370.f, 100.f, 50.f);
-    spawnMysteryBlock(550.f, 370.f, ItemType::Mushroom);
+    spawnMysteryBlock(550.f, 370.f, ItemType::SuperMushroom);
     spawnPlatform(600.f, 370.f, 100.f, 50.f);
     spawnPlatform(525.f, 240.f, 100.f, 50.f);
 
@@ -792,6 +795,18 @@ void Game::update()
                     mush->resolveCollision(pipe);
                 }
             }
+
+            if (SuperMushroom* superMush = dynamic_cast<SuperMushroom*>(it.get())) {
+                for (auto& plat : platforms) {
+                    superMush->resolveCollision(plat);
+                }
+                for (auto& ground : grounds) {
+                    superMush->resolveCollision(ground);
+                }
+                for (auto& pipe : pipes) {
+                    superMush->resolveCollision(pipe);
+                }
+			}
         }
 
         std::erase_if(enemies, [](const std::unique_ptr<Enemy>& e) {
@@ -1095,7 +1110,16 @@ void Game::spawnMysteryBlock(float x, float y, ItemType content) {
                 });
             items.push_back(std::move(mush));
         }
-        });
+        else if (content == ItemType::SuperMushroom) {
+            auto superMush = std::make_unique<SuperMushroom>(pos.x, pos.y);
+            superMush->initTexture(superMushroomTex);
+            superMush->setOnPickup([this](Player& p) {
+                hud.addScore(1000);
+                p.activateGrow();
+                });
+            items.push_back(std::move(superMush));
+        }
+    });
 
     blocks.push_back(std::move(block));
 }
