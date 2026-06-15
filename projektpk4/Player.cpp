@@ -122,11 +122,11 @@ void Player::draw(sf::RenderWindow& window) {
 }
 
 sf::FloatRect Player::getBounds() const {
-	return sprite->getGlobalBounds();
+    return sprite->getGlobalBounds();
 }
 
 void Player::stopFalling(float platformTopY) {
-	sprite->setPosition({ sprite->getPosition().x, platformTopY - sprite->getGlobalBounds().size.y });
+    sprite->setPosition({ sprite->getPosition().x, platformTopY - sprite->getGlobalBounds().size.y });
 
 	speedY = 0.f; 
 	canJump = true;  
