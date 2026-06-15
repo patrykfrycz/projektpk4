@@ -1051,7 +1051,7 @@ void Game::spawnCoins() {
 
     for (auto& item : items) {
         if (item->getType() == ItemType::Coin) {
-            item->setOnPickup([this](Player& p) { hud.addScore(10); });
+            item->setOnPickup([this](Player& p) { hud.addScore(150); });
         }
     }
 
@@ -1061,29 +1061,29 @@ void Game::spawnCoins() {
 void Game::spawnEnemies() {
     enemies.clear();
 
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(800.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(650.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(1500.f, 440.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(2100.f, 440.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(3600.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(4250.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(4800.f, 440.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(7500.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(11000.f, 440.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(12500.f, 440.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(14000.f, 440.f), 16, 22, EnemyType::Troopa));
+    // G³ówna mapa
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(800.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(650.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(1500.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(2100.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(3600.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(4250.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(4800.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(7500.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(11000.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(12500.f, 440.f)));
+    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(14000.f, 440.f)));
 
-    //podziemia
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(900.f, 2940.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(1100.f, 2940.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(1700.f, 2940.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(2500.f, 2940.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(2700.f, 2940.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(3400.f, 2940.f), 16, 22, EnemyType::Troopa));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(3600.f, 2940.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(goombaTexture, sf::Vector2f(4300.f, 2940.f), 18, 22, EnemyType::Goomba));
-    enemies.emplace_back(std::make_unique<Enemy>(troopaTexture, sf::Vector2f(4600.f, 2940.f), 16, 22, EnemyType::Troopa));
-
+    // Podziemia
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(900.f, 2940.f)));
+    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(1100.f, 2940.f)));
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(1700.f, 2940.f)));
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(2500.f, 2940.f)));
+    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(2700.f, 2940.f)));
+    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(3400.f, 2940.f)));
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(3600.f, 2940.f)));
+    enemies.emplace_back(std::make_unique<Goomba>(goombaTexture, sf::Vector2f(4300.f, 2940.f)));
+    enemies.emplace_back(std::make_unique<Troopa>(troopaTexture, sf::Vector2f(4600.f, 2940.f)));
 }
 
 void Game::spawnMysteryBlock(float x, float y, ItemType content) {
